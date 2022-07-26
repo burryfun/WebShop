@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ss_logo from '../assets/ss_logo.svg'
 import Modal from '../Modals/LoginFormModal';
-import LoginForm from './LoginForm';
+import LoginFormModal from '../Modals/LoginFormModal';
 
 const Header = () => {
 
@@ -34,7 +34,7 @@ const Header = () => {
               <Link to={'/cart'}>
                 <li className='bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center'>Cart</li>
               </Link>
-              <LoginForm />
+              <LoginFormModal />
             </ul>
           </div>
         </div>
