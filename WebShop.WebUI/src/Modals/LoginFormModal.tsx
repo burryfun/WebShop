@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
+
+
 
 interface ILoginFormInput {
   email: string;
@@ -11,22 +14,54 @@ const LoginFormModal = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [isopacityLoginForm, setOpacityLoginForm] = useState(true);
   const [isScaleLoginForm, setScaleLoginForm] = useState(true);
+  const [isSuccessResponse, setSuccessResponse] = useState(false);
+
+  const navigate = useNavigate();
 
   const { register, handleSubmit } = useForm<ILoginFormInput>();
-  const onSubmit = (loginData: ILoginFormInput) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: loginData.email, password: loginData.password }),
-    };
+  const onSubmit = async (loginData: ILoginFormInput) => {
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/login`, requestOptions)
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.log(error))
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email: loginData.email, password: loginData.password }),
+      });
+
+      response.headers.forEach(function(value, name) {
+        console.log(name + ": " + value);
+    });
+
+      type ResponseData = {
+        success: boolean;
+        message: string;
+      }
+      const { success, message}: ResponseData = await response.json();
+
+      if (success) {
+        setSuccessResponse(true);
+        setShowLoginForm(false);
+        return navigate('/');
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
   };
+
+  const onLogout = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {method: 'POST'});
+      if (response.ok) {
+        setSuccessResponse(false);
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }
 
   // Disable opacity background and scaling modal form if click to outisde from form
   const isOnClickOutsideTargetContainer = true;
@@ -45,14 +80,19 @@ const LoginFormModal = () => {
 
       {/* Modal toggle */}
       <button onClick={() => {
-        setShowLoginForm(true);
+        if (isSuccessResponse) {
+          onLogout();
+        }
+        else {
+          setShowLoginForm(true);
+        }
 
         setTimeout(() => {
           setOpacityLoginForm(false);
           setScaleLoginForm(false);
         }, 100);
       }} className="block text-base bg-green hover:bg-dark rounded-lg px-4 py-3 self-center">
-        Login
+        {isSuccessResponse ? 'Logout' : 'Login'}
       </button>
 
       {showLoginForm ? (
