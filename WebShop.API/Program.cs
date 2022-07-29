@@ -21,6 +21,7 @@ builder.Services.AddCors(options =>
                          policy.WithOrigins("http://localhost:3000");
                          policy.WithMethods("GET", "POST", "PUT", "DELETE");
                          policy.AllowAnyHeader();
+                         policy.AllowCredentials();
                      });
 });
 
@@ -30,8 +31,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/login");
         options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/api/login");
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
-        options.Cookie.MaxAge = options.ExpireTimeSpan;
         options.SlidingExpiration = true;
+        options.Cookie.Name = "WebShopLoginCookie";
+        options.Cookie.MaxAge = options.ExpireTimeSpan;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
     });
 
 string connection = builder.Configuration.GetConnectionString("WebShopDB");
@@ -51,6 +55,12 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseCookiePolicy(
+    new CookiePolicyOptions
+    {
+        Secure = CookieSecurePolicy.Always
+    });
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -60,6 +70,8 @@ app.UseSwaggerUI(c =>
 app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 
