@@ -71,7 +71,7 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 
