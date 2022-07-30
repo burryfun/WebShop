@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using WebShop.Domain;
+using WebShop.Domain.Models;
 using WebShop.Persistence.Repositories;
 
 namespace WebShop.Application.Services
@@ -19,10 +20,74 @@ namespace WebShop.Application.Services
         private readonly AccountRepository _accountRepository;
 
         private readonly IConfiguration _configuration;
+
         public AuthService(AccountRepository accountRepository, IConfiguration configuration)
         {
             _accountRepository = accountRepository;
             _configuration = configuration;
+        }
+
+        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, string ipAddress)
+        {
+            var account = await _accountRepository.GetByEmailAsync(request.Email);
+
+            if (account == null)
+            {
+                return new AuthenticateResponse { IsSuccess = false, Message = $"User {request.Email} not exists" };
+            }
+
+            if (account.Password != GetPasswordHashString(request.Password))
+            {
+                return new AuthenticateResponse { IsSuccess = false, Message = "Password is incorrect" };
+            }
+
+            var token = GenerateJWT(account);
+            var refreshToken = generateRefreshToken(ipAddress);
+
+            account.RefreshTokens.Add(refreshToken);
+
+            removeOldRefreshTokens(account);
+
+            await _accountRepository.Update(account);
+
+            var response = new AuthenticateResponse { 
+                IsSuccess = true, 
+                Message = "Authentication successful", 
+                JwtToken = token, 
+                RefreshToken = refreshToken.Token 
+            };
+
+            return response;
+        }
+
+        private RefreshToken generateRefreshToken(string ipAddress)
+        {
+            return new RefreshToken
+            {
+                Token = randomTokenString(),
+                Expires = DateTime.UtcNow.AddDays(7),
+                Created = DateTime.UtcNow,
+                CreatedByIp = ipAddress
+            };
+        }
+
+        private void removeOldRefreshTokens(Account account)
+        {
+            var jwtOptions = _configuration.GetSection("JwtOptions");
+            var tokenTTL = jwtOptions.GetChildren().FirstOrDefault(tokenTTL => tokenTTL.Key == "RefreshTokenTTL")?.Value;
+
+            account.RefreshTokens.RemoveAll(x =>
+                !x.IsActive &&
+                x.Created.AddDays(Convert.ToDouble(tokenTTL)) <= DateTime.UtcNow);
+        }
+
+        private string randomTokenString()
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var randomBytes = new byte[40];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+            // convert random bytes to hex string
+            return BitConverter.ToString(randomBytes).Replace("-", "");
         }
 
         public async Task<Account> CreateAsync(string email, string password)

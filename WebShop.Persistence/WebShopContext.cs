@@ -18,7 +18,8 @@ namespace WebShop.Persistence
                     Email = "admin@admin.com",
                     Id = Guid.NewGuid(),
                     Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-                    Role = Role.Admin
+                    Role = Role.Admin,
+                    RefreshTokens = new List<RefreshToken>() {}
                 });
         }
 

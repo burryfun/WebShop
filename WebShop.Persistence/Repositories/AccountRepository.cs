@@ -78,9 +78,10 @@ namespace WebShop.Persistence.Repositories
             return account;
         }
 
-        public Account Update(Account _object)
+        public async Task Update(Account account)
         {
-            throw new NotImplementedException();
+            _context.Update(account);
+            await _context.SaveChangesAsync();
         }
     }
 }
