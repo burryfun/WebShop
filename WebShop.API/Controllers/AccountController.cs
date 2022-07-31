@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebShop.API.ViewModels;
 using WebShop.Application.Services;
+using WebShop.Domain.Models;
 
 namespace WebShop.API.Controllers
 {
     //[Route("api/[controller]")]
     //[ApiController]
-    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly AuthService _authService;
@@ -21,44 +21,64 @@ namespace WebShop.API.Controllers
             _authService = authService;
         }
 
-        [AllowAnonymous]
         [HttpPost("api/login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestViewModel viewModel)
+        public async Task<IActionResult> Login([FromBody] AuthenticateRequest request)
         {
-            if (viewModel == null)
+            if (request == null)
             {
                 return BadRequest();
             }
 
-            var account = await _authService.FindByEmailAsync(viewModel.Email);
+            var response = await _authService.Authenticate(request, ipAddress());
 
-            if (account == null ||
-                !await _authService.CheckPasswordAsync(account, viewModel.Password))
+            if (response.IsSuccess == false)
             {
-                Console.WriteLine(viewModel.Email, viewModel.Password);
-                return Unauthorized(new LoginResponseViewModel { 
-                    Success = false, 
-                    Message = "Invalid Email or Password"
-                });
+                return Unauthorized(response);
             }
 
+            setTokenCookieToResponse(response.RefreshToken);
+            return Ok(response);
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, account.Email),
-                new Claim(ClaimTypes.Role, account.Role.ToString()),
-            };
+            //var account = await _authService.FindByEmailAsync(viewModel.Email);
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            //if (account == null ||
+            //    !await _authService.CheckPasswordAsync(account, viewModel.Password))
+            //{
+            //    Console.WriteLine(viewModel.Email, viewModel.Password);
+            //    return Unauthorized(new LoginResponseViewModel { 
+            //        Success = false, 
+            //        Message = "Invalid Email or Password"
+            //    });
+            //}
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-            return Ok(new LoginResponseViewModel
-            {
-                Success = true,
-                Message = "Login successfull"
-            });
+            //var claims = new List<Claim>
+            //{
+            //    new Claim(ClaimTypes.Name, account.Email),
+            //    new Claim(ClaimTypes.Role, account.Role.ToString()),
+            //};
+
+            //var claimsIdentity = new ClaimsIdentity(
+            //    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+            //return Ok(new LoginResponseViewModel
+            //{
+            //    Success = true,
+            //    Message = "Login successfull"
+            //});
+        }
+
+        [HttpPost("api/refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refresh-token"];
+            var response = await _authService.RefreshToken(refreshToken, ipAddress());
+            setTokenCookieToResponse(response.RefreshToken);
+
+            return Ok(response);
+
         }
 
         [HttpPost("api/logout")]
@@ -94,6 +114,25 @@ namespace WebShop.API.Controllers
             await _authService.Delete(email);
 
             return Ok("Your account deleted");
+        }
+
+
+        private string ipAddress()
+        {
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                return Request.Headers["X-Forwarded-For"];
+            else
+                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        }
+
+        private void setTokenCookieToResponse(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refresh-token", refreshToken, cookieOptions);
         }
     }
 }

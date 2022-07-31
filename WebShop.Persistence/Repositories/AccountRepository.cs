@@ -78,6 +78,17 @@ namespace WebShop.Persistence.Repositories
             return account;
         }
 
+        public async Task<Account> GetByTokenAsync(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            var account = await _context.accounts.SingleOrDefaultAsync(account => account.RefreshTokens.Any(t => t.Token == token));
+            return account;
+        }
+
         public async Task Update(Account account)
         {
             _context.Update(account);

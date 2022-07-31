@@ -41,7 +41,7 @@ namespace WebShop.Application.Services
                 return new AuthenticateResponse { IsSuccess = false, Message = "Password is incorrect" };
             }
 
-            var token = GenerateJWT(account);
+            var accessToken = GenerateJWT(account);
             var refreshToken = generateRefreshToken(ipAddress);
 
             account.RefreshTokens.Add(refreshToken);
@@ -53,11 +53,57 @@ namespace WebShop.Application.Services
             var response = new AuthenticateResponse { 
                 IsSuccess = true, 
                 Message = "Authentication successful", 
-                JwtToken = token, 
+                JwtToken = accessToken, 
                 RefreshToken = refreshToken.Token 
             };
 
             return response;
+        }
+
+        public async Task<AuthenticateResponse> RefreshToken(string oldToken, string ipAddress)
+        {
+            var (refreshToken, account) = await getRefreshTokenAndAccountAsync(oldToken);
+
+            // replace old refresh token with a new one and save
+            var newRefreshToken = generateRefreshToken(ipAddress);
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            refreshToken.ReplacedByToken = newRefreshToken.Token;
+            account.RefreshTokens.Add(newRefreshToken);
+
+            removeOldRefreshTokens(account);
+
+            await _accountRepository.Update(account);
+
+            var accessToken = GenerateJWT(account);
+
+            var response = new AuthenticateResponse
+            {
+                IsSuccess = true,
+                Message = "Authentication successful",
+                JwtToken = accessToken,
+                RefreshToken = newRefreshToken.Token
+            };
+
+            return response;
+        }
+
+        private async Task<(RefreshToken, Account)> getRefreshTokenAndAccountAsync(string oldToken)
+        {
+            var account = await _accountRepository.GetByTokenAsync(oldToken);
+            
+            if (account == null)
+            {
+                throw new Exception("Invalid token");
+            }
+
+            var refreshToken = account.RefreshTokens.Single(t => t.Token == oldToken);
+            if (refreshToken == null)
+            {
+                throw new Exception("Invalid token");
+            }
+
+            return (refreshToken, account);
         }
 
         private RefreshToken generateRefreshToken(string ipAddress)
