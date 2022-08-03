@@ -24,9 +24,10 @@ namespace WebShop.API.Controllers
         [HttpPost("api/login")]
         public async Task<IActionResult> Login([FromBody] AuthenticateRequest request)
         {
-            if (request == null)
+            if (request == null || request.Email == "" || request.Password == "")
             {
-                return BadRequest();
+                var res = new AuthenticateResponse(){ IsSuccess = false, Message = "Email or password is empty" };
+                return BadRequest(res);
             }
 
             var response = await _authService.Authenticate(request, ipAddress());
