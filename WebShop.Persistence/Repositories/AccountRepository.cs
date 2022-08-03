@@ -89,7 +89,7 @@ namespace WebShop.Persistence.Repositories
             return account;
         }
 
-        public async Task Update(Account account)
+        public async Task UpdateAsync(Account account)
         {
             _context.Update(account);
             await _context.SaveChangesAsync();

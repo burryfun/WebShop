@@ -85,8 +85,30 @@ namespace WebShop.API.Controllers
         [HttpPost("api/logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Ok();
+            var token = Request.Cookies["refresh-token"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { message = "Token is required" });
+            }
+
+            await _authService.RevokeToken(token, ipAddress());
+
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Console.WriteLine(cookie);
+            }
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            };
+            Response.Cookies.Append("refresh-token", "", cookieOptions);
+
+            return Ok(new { message = "Token revoked" });
         }
 
         [HttpPost("api/register")]
@@ -131,6 +153,8 @@ namespace WebShop.API.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             };
             Response.Cookies.Append("refresh-token", refreshToken, cookieOptions);
