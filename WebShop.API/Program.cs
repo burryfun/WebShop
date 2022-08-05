@@ -25,19 +25,6 @@ builder.Services.AddCors(options =>
                      });
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/login");
-        options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/api/login");
-        options.ExpireTimeSpan = TimeSpan.FromDays(30);
-        options.SlidingExpiration = true;
-        options.Cookie.Name = "WebShopLoginCookie";
-        options.Cookie.MaxAge = options.ExpireTimeSpan;
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
-    });
-
 string connection = builder.Configuration.GetConnectionString("WebShopDB");
 builder.Services.AddDbContext<WebShopContext>(options => options.UseSqlServer(connection));
 
@@ -54,12 +41,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
-
-app.UseCookiePolicy(
-    new CookiePolicyOptions
-    {
-        Secure = CookieSecurePolicy.Always
-    });
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

@@ -48,16 +48,44 @@ namespace WebShop.Application.Services
 
             removeOldRefreshTokens(account);
 
-            await _accountRepository.Update(account);
+            await _accountRepository.UpdateAsync(account);
 
-            var response = new AuthenticateResponse { 
-                IsSuccess = true, 
-                Message = "Authentication successful", 
-                JwtToken = accessToken, 
-                RefreshToken = refreshToken.Token 
+            var response = new AuthenticateResponse
+            {
+                IsSuccess = true,
+                Message = "Authentication successful",
+                JwtToken = accessToken,
+                RefreshToken = refreshToken.Token
             };
 
             return response;
+        }
+
+        public async Task<RegisterResponse> Register(RegisterRequest request)
+        {
+            var checkAccount = await _accountRepository.GetByEmailAsync(request.Email);
+
+            if (checkAccount != null)
+            {
+                return new RegisterResponse { IsSuccess = false, Message = "This user already exists" };
+            }
+
+            var account = new Account
+            {
+                Email = request.Email,
+                Password = GetPasswordHashString(request.Password),
+                Role = Role.User
+            };
+
+            await _accountRepository.CreateAsync(account);
+
+            return new RegisterResponse
+            {
+                AccountId = account.Id,
+                Email = account.Email,
+                IsSuccess = true,
+                Message = $"User {account.Email} registered",
+            };
         }
 
         public async Task<AuthenticateResponse> RefreshToken(string oldToken, string ipAddress)
@@ -73,7 +101,7 @@ namespace WebShop.Application.Services
 
             removeOldRefreshTokens(account);
 
-            await _accountRepository.Update(account);
+            await _accountRepository.UpdateAsync(account);
 
             var accessToken = GenerateJWT(account);
 
@@ -88,10 +116,20 @@ namespace WebShop.Application.Services
             return response;
         }
 
+        public async Task RevokeToken(string currentToken, string ipAddress)
+        {
+            var (refreshToken, account) = await getRefreshTokenAndAccountAsync(currentToken);
+
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+
+            await _accountRepository.UpdateAsync(account);
+        }
+
         private async Task<(RefreshToken, Account)> getRefreshTokenAndAccountAsync(string oldToken)
         {
             var account = await _accountRepository.GetByTokenAsync(oldToken);
-            
+
             if (account == null)
             {
                 throw new Exception("Invalid token");

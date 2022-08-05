@@ -39,36 +39,6 @@ namespace WebShop.API.Controllers
 
             setTokenCookieToResponse(response.RefreshToken);
             return Ok(response);
-
-            //var account = await _authService.FindByEmailAsync(viewModel.Email);
-
-            //if (account == null ||
-            //    !await _authService.CheckPasswordAsync(account, viewModel.Password))
-            //{
-            //    Console.WriteLine(viewModel.Email, viewModel.Password);
-            //    return Unauthorized(new LoginResponseViewModel { 
-            //        Success = false, 
-            //        Message = "Invalid Email or Password"
-            //    });
-            //}
-
-
-            //var claims = new List<Claim>
-            //{
-            //    new Claim(ClaimTypes.Name, account.Email),
-            //    new Claim(ClaimTypes.Role, account.Role.ToString()),
-            //};
-
-            //var claimsIdentity = new ClaimsIdentity(
-            //    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-            //return Ok(new LoginResponseViewModel
-            //{
-            //    Success = true,
-            //    Message = "Login successfull"
-            //});
         }
 
         [HttpPost("api/refresh-token")]
@@ -112,10 +82,18 @@ namespace WebShop.API.Controllers
         }
 
         [HttpPost("api/register")]
-        public async Task<IActionResult> Register([FromForm] string email, [FromForm] string password)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var account = await _authService.CreateAsync(email, password);
-            return Ok();
+            var response = await _authService.Register(request);
+            
+            if (response.IsSuccess == false)
+            {
+                return BadRequest(response);
+            }
+            else
+            {
+                return Ok(response);
+            }
         }
 
         [HttpDelete("api/delete")]
