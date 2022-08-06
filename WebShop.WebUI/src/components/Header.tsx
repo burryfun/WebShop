@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ss_logo from '../assets/ss_logo.svg'
-import Modal from '../Modals/LoginFormModal';
 import LoginFormModal from '../Modals/LoginFormModal';
 
 const Header = () => {
