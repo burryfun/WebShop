@@ -1,65 +1,42 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm, SubmitHandler } from "react-hook-form";
+import { observer } from 'mobx-react-lite';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-
-
-interface ILoginFormInput {
-  email: string;
-  password: string;
-}
+import { Context } from '..';
 
 const LoginFormModal = () => {
 
-  const [showLoginForm, setShowLoginForm] = useState(false);
-  const [isopacityLoginForm, setOpacityLoginForm] = useState(true);
-  const [isScaleLoginForm, setScaleLoginForm] = useState(true);
-  const [isSuccessResponse, setSuccessResponse] = useState(false);
-
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [isPassMatch, setIsPassMatch] = useState<boolean>(false);
+  const { store } = useContext(Context);
   const navigate = useNavigate();
 
-  const { register, handleSubmit } = useForm<ILoginFormInput>();
-  const onSubmit = async (loginData: ILoginFormInput) => {
+  const [isShowLoginForm, setIsShowLoginForm] = useState<boolean>(false);
+  const [isScaleLoginForm, setScaleLoginForm] = useState(true);
+  const [isOpacityLoginForm, setOpacityLoginForm] = useState(true);
 
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email: loginData.email, password: loginData.password }),
-      });
 
-      response.headers.forEach(function(value, name) {
-        console.log(name + ": " + value);
-    });
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // prevent page refresh
+    event.preventDefault();
 
-      type ResponseData = {
-        success: boolean;
-        message: string;
-      }
-      const { success, message}: ResponseData = await response.json();
-
-      if (success) {
-        setSuccessResponse(true);
-        setShowLoginForm(false);
-        return navigate('/');
-      }
-
-    } catch (e) {
-      console.error(e);
+    const result = await store.login(email, password);
+    if (result?.status === 200) {
+      navigate('/');
+      setIsShowLoginForm(false);
+    } else {
+      navigate('/error');
     }
   };
 
-  const onLogout = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {method: 'POST'});
-      if (response.ok) {
-        setSuccessResponse(false);
-      }
-    } catch(e) {
-      console.error(e);
+  const handleLogout = async () => {
+    const result = await store.logout();
+
+    if (result?.status === 200) {
+      navigate('/');
+    } else {
+      navigate('/error');
     }
   }
 
@@ -68,37 +45,36 @@ const LoginFormModal = () => {
   const targetContainer = useRef<HTMLDivElement>(null);
   const onOverlayClick = (e: React.MouseEvent) => {
     if (!targetContainer.current?.contains(e.target as Node)) {
-      setShowLoginForm(false);
+      setIsShowLoginForm(false);
       setOpacityLoginForm(true);
       setScaleLoginForm(true);
     }
   };
 
   return (
-
     <>
-
       {/* Modal toggle */}
-      <button onClick={() => {
-        if (isSuccessResponse) {
-          onLogout();
-        }
-        else {
-          setShowLoginForm(true);
-        }
 
-        setTimeout(() => {
-          setOpacityLoginForm(false);
-          setScaleLoginForm(false);
-        }, 100);
-      }} className="block text-base bg-green hover:bg-dark rounded-lg px-4 py-3 self-center">
-        {isSuccessResponse ? 'Logout' : 'Login'}
+      <button className='block text-base bg-green hover:bg-dark rounded-lg px-4 py-3 self-center'
+        onClick={() => {
+
+          if (store.isAuth) {
+            handleLogout();
+          } else {
+            setIsShowLoginForm(true);
+          }
+          setTimeout(() => {
+            setOpacityLoginForm(false);
+            setScaleLoginForm(false);
+          }, 100);
+        }}>
+        {store.isAuth ? "Logout" : "Login"}
       </button>
 
-      {showLoginForm ? (
+      {isShowLoginForm ? (
         <>
           {/* Main modal */}
-          <div id="main_modal" className={`flex fixed z-50 w-full md:inset-0 justify-center items-center ${isScaleLoginForm ? "opacity-0" : "opacity-100"} ${isScaleLoginForm ? "scale-50" : "scale-100"}  transition-all duration-300`}
+          <div className={`flex fixed z-50 w-full md:inset-0 justify-center items-center ${isScaleLoginForm ? "opacity-0" : "opacity-100"} ${isScaleLoginForm ? "scale-50" : "scale-100"}  transition-all duration-300`}
             onClick={isOnClickOutsideTargetContainer ? onOverlayClick : undefined}>
             <div className="relative p-4 w-full max-w-md h-auto">
               {/* Modal content */}
@@ -108,7 +84,7 @@ const LoginFormModal = () => {
                     setOpacityLoginForm(true);
                     setScaleLoginForm(true)
                     setTimeout(() => {
-                      setShowLoginForm(false);
+                      setIsShowLoginForm(false);
                     }, 300);
                   }} >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -117,17 +93,29 @@ const LoginFormModal = () => {
                 </button>
                 <div className="py-6 px-6 lg:px-8">
                   <h3 className="mb-4 text-xl font-medium text-black">Sign in to our platform</h3>
-
-                  <form className="space-y-6" action="#" onSubmit={handleSubmit(onSubmit)}>
+                  <form className="space-y-6" action="#" onSubmit={handleSubmit}>
                     <div>
                       <label className="block mb-2 text-sm font-medium text-black">Your email</label>
-                      <input {...register("email")} type="email" name="email" id="email" className="bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5" placeholder="name@company.com" required>
-                      </input>
+                      <input
+                        className='bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5'
+                        onChange={e => setEmail(e.target.value)}
+                        value={email}
+                        type='email'
+                        placeholder='Email'
+                        pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$'
+                        required
+                      />
                     </div>
                     <div>
-                      <label className="block mb-2 text-sm font-medium text-black">Your password</label>
-                      <input {...register("password")} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:border-dark block w-full p-2.5" required>
-                      </input>
+                      <label className="block mb-2 text-sm font-medium text-black">Your email</label>
+                      <input
+                        className='bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5'
+                        onChange={e => setPassword(e.target.value)}
+                        value={password}
+                        type='password'
+                        placeholder='••••••••'
+                        required
+                      />
                     </div>
                     <div className="flex justify-between">
                       <div className="flex items-start">
@@ -139,22 +127,27 @@ const LoginFormModal = () => {
                       </div>
                       <a href="#" className="text-sm text-blue-700 hover:underline">Lost Password?</a>
                     </div>
-                    <button type="submit" className="w-full bg-green hover:bg-blue focus:ring-2 focus:outline-none focus:ring-blue font-medium rounded-lg text-sm px-5 py-2.5 text-center">Login to your account</button>
+                    <button type='submit' className='w-full bg-green hover:bg-blue focus:ring-2 focus:outline-none focus:ring-blue font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
+                      Login to your account
+                    </button>
                     <div className="text-sm font-medium text-gray_500">
-                      Not registered? <a href="#" className="text-black hover:underline">Create account</a>
+                      Not registered? <a onClick={() => {
+                        setIsShowLoginForm(false);
+                        navigate('/register');
+                        }} href="#" className="text-black hover:underline">Create account</a>
                     </div>
                   </form>
-
                 </div>
               </div>
             </div>
           </div>
           {/* Outside */}
-          <div id='bg_openedModal' className={`!ml-0 inset-0 fixed w-full z-40 bg-black ${isopacityLoginForm ? "opacity-0" : "opacity-25"} transition-opacity duration-300`}></div>
+          <div id='bg_openedModal' className={`!ml-0 inset-0 fixed w-full z-40 bg-black ${isOpacityLoginForm ? "opacity-0" : "opacity-25"} transition-opacity duration-300`}></div>
         </>
       ) : null}
+
     </>
-  )
+  );
 };
 
-export default LoginFormModal;
+export default observer(LoginFormModal);
