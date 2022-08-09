@@ -8,7 +8,7 @@ export namespace api {
     withCredentials: true,
     baseURL: API_URL
   })
-  
+
   $api.interceptors.request.use((config) => {
     if (!config?.headers) {
       throw new Error(`Expected 'config' and 'config.headers' not to be undefined`);
@@ -27,30 +27,49 @@ export namespace api {
       try {
         const response = await axios.post<api.IAuthResponse>(`${api.API_URL}/refresh-token`, {}, { withCredentials: true });
         localStorage.setItem('token', response.data.jwtToken);
-      } catch(e) {
+      } catch (e) {
         console.log('NOT AUTHORIZED');
       }
     }
     throw err;
   })
-  
+
   // REST REQUESTS
-  
+
   export const getBrands = async () => {
     const response = await $api.get<IBrand[]>('/catalog');
     return response.data;
   }
-  
+
+  export const postBrand = async (brandName: IBrand) => {
+    const response = await $api.post('/catalog', brandName);
+    return response.data;
+  }
+
+  export const postBrandImage = async (brandImage: IImageBrand) => {
+    const response = await $api.post('/images', brandImage, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  }
+
+  export const getSmartphones = async (brandName: string) => {
+    const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}`);
+    return response.data;
+  }
+
   // MODELS
   export interface IBrand {
+    id?: string;
+    name: string;
+    smartphones?: ISmartphone[];
+  }
+
+  export interface ISmartphone {
     id: string;
     name: string;
-    smartphones: ISmartphone[];
-  }
-  
-  export interface ISmartphone {
-    id:	string;
-    name:	string;
     description: string;
     price: number;
   }
@@ -62,5 +81,9 @@ export namespace api {
     refreshToken: string;
   }
 
+  export interface IImageBrand {
+    name?: string;
+    image?: File;
+  }
 }
 
