@@ -7,8 +7,6 @@ const LoginFormModal = () => {
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [isPassMatch, setIsPassMatch] = useState<boolean>(false);
   const { store } = useContext(Context);
   const navigate = useNavigate();
 
@@ -74,7 +72,7 @@ const LoginFormModal = () => {
       {isShowLoginForm ? (
         <>
           {/* Main modal */}
-          <div className={`flex fixed z-50 w-full md:inset-0 justify-center items-center ${isScaleLoginForm ? "opacity-0" : "opacity-100"} ${isScaleLoginForm ? "scale-50" : "scale-100"}  transition-all duration-300`}
+          <div className={`flex fixed z-50 w-full md:inset-0 justify-center items-center ${isOpacityLoginForm ? "opacity-0" : "opacity-100"} ${isScaleLoginForm ? "scale-50" : "scale-100"}  transition-all duration-300`}
             onClick={isOnClickOutsideTargetContainer ? onOverlayClick : undefined}>
             <div className="relative p-4 w-full max-w-md h-auto">
               {/* Modal content */}
