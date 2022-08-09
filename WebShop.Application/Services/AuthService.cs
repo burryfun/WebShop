@@ -193,6 +193,18 @@ namespace WebShop.Application.Services
             return account;
         }
 
+        public async Task<Account> FindByIdAsync(Guid id)
+        {
+            var account = await _accountRepository.GetByIdAsync(id);
+
+            if (account == null)
+            {
+                Console.WriteLine($"Account: {id} not found");
+            }
+
+            return account;
+        }
+
         public async Task<bool> CheckPasswordAsync(Account account, string password)
         {
             var result = await _accountRepository.GetByEmailAndPasswordAsync(account.Email, GetPasswordHashString(password));
@@ -216,6 +228,11 @@ namespace WebShop.Application.Services
 
             await _accountRepository.DeleteAsync(account.Id);
             return true;
+        }
+
+        public async Task DeleteByIdAsync(Guid id)
+        {
+            await _accountRepository.DeleteAsync(id);
         }
 
         private static string GetPasswordHashString(string password)

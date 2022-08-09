@@ -64,11 +64,6 @@ namespace WebShop.API.Controllers
 
             await _authService.RevokeToken(token, ipAddress());
 
-            foreach (var cookie in Request.Cookies.Keys)
-            {
-                Console.WriteLine(cookie);
-            }
-
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -96,25 +91,24 @@ namespace WebShop.API.Controllers
             }
         }
 
-        [HttpDelete("api/delete")]
-        public async Task<IActionResult> DeleteAsync([FromForm] string email, [FromForm] string password)
+        [HttpPost("api/delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteRequest request)
         {
-            var account = await _authService.FindByEmailAsync(email);
+            var account = await _authService.FindByIdAsync(request.Id);
 
-            if (account == null ||
-                !await _authService.CheckPasswordAsync(account, password))
+            if (account == null)
             {
-                return Unauthorized(new LoginResponseViewModel
+                return BadRequest(new
                 {
                     Success = false,
-                    Message = "Invalid Email or Password"
+                    Message = "Invalid Id"
                 });
             }
 
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await _authService.Delete(email);
+            await _authService.DeleteByIdAsync(request.Id);
 
-            return Ok("Your account deleted");
+            return Ok($"Account {request.Id} deleted");
         }
 
 
