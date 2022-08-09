@@ -19,6 +19,10 @@ namespace WebShop.API.Controllers
                 {
                     return PhysicalFile(fullPath, "image/svg+xml");
                 }
+                else
+                {
+                    return PhysicalFile($"{Directory.GetCurrentDirectory()}/images/SampleImage.svg", "image/svg+xml");
+                }
             }
             return BadRequest();
         }
