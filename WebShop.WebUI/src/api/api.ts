@@ -41,12 +41,12 @@ export namespace api {
     return response.data;
   }
 
-  export const postBrand = async (brandName: IBrand) => {
-    const response = await $api.post('/catalog', brandName);
+  export const postBrand = async (brand: IBrand) => {
+    const response = await $api.post('/catalog', brand);
     return response.data;
   }
 
-  export const postBrandImage = async (brandImage: IImageBrand) => {
+  export const postBrandImage = async (brandImage: IImage) => {
     const response = await $api.post('/images', brandImage, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -55,8 +55,22 @@ export namespace api {
     return response.data;
   }
 
+
   export const getSmartphones = async (brandName: string) => {
     const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}`);
+    return response.data;
+  }
+
+  export const postSmartphone = async (brandName: string, smartphone: ISmartphone) => {
+    const response = await $api.post(`/catalog/${brandName}`, smartphone);
+    return response.data;
+  }
+  export const postSmartphoneImage = async (brandName: string, smartphoneImage: IImage) => {
+    const response = await $api.post(`/images/${brandName}`, smartphoneImage, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   }
 
@@ -68,7 +82,7 @@ export namespace api {
   }
 
   export interface ISmartphone {
-    id: string;
+    id?: string;
     name: string;
     description: string;
     price: number;
@@ -81,7 +95,7 @@ export namespace api {
     refreshToken: string;
   }
 
-  export interface IImageBrand {
+  export interface IImage {
     name?: string;
     image?: File;
   }
