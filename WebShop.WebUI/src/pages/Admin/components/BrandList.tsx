@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../../api/api';
 import AddBrandModal from './modals/AddBrandModal';
+import AddSmartphoneModal from './modals/AddSmartphoneModal';
+import SmartphoneInfoModal from './modals/SmartphoneInfoModal';
 import SmartphoneList from './SmartphoneList';
 
 const BrandList = () => {
@@ -18,8 +20,9 @@ const BrandList = () => {
     <div className='mx-4'>
       {brands?.map((brand, index) => (
         <div key={brand.id} >
-          <div className='grid grid-cols-10 gap-2 items-center bg-gray_300 my-2 border px-4 py-2 rounded-lg'>
-            <div>
+          <div className='grid grid-cols-12 gap-2 items-center my-2'>
+            <div className='grid grid-cols-4 col-span-4 bg-gray_300 items-center border px-4 py-2 rounded-lg'>
+            <div className='flex justify-evenly'>
               <span>{index + 1}. </span>
               <button className='underline'
                 onClick={() => {
@@ -34,9 +37,14 @@ const BrandList = () => {
               <button type='button' className='border border-gray_500 bg-white'>Изменить</button>
             </div>
             <div className='grid col-span-2 justify-items-stretch gap-1'>
-              <button type='button' className='border border-gray_500 bg-white'>Добавить Смартфон</button>
+              {/* <button type='button' className='border border-gray_500 bg-white'>Добавить Смартфон</button> */}
+              <div className='border border-gray_500 bg-white'>
+                <AddSmartphoneModal label='Добавить Смартфон' brandName={brand.name}/>
+              </div>
               <button type='button' className='border border-gray_500 bg-white'>Удалить Бренд</button>
             </div>
+          </div>
+          
           </div>
           <div>
             {
