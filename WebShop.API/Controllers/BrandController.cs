@@ -34,7 +34,7 @@ namespace WebShop.API.Controllers
         }
 
         [HttpPost("/api/catalog/{brandName}")]
-        public ActionResult AddSmartphoneToBrand(string brandName, Smartphone smartphone)
+        public ActionResult AddSmartphoneToBrand(string brandName, [FromBody]Smartphone smartphone)
         {
             var brand = _brandsRepository.GetByName(brandName.ToLower());
 

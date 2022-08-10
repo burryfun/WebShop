@@ -31,8 +31,8 @@ namespace WebShop.API.Controllers
         }
 
         [HttpPost("api/catalog")]
-        [Authorize(Roles="Admin")]
-        public ActionResult AddBrand(Brand brand)
+        [Authorize(Role.Admin)]
+        public ActionResult AddBrand([FromBody] Brand brand)
         {
             if (brand == null)
             {
