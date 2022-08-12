@@ -12,8 +12,8 @@ using WebShop.Persistence;
 namespace WebShop.Persistence.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    [Migration("20220730204046_addRefreshTokensToAccount")]
-    partial class addRefreshTokensToAccount
+    [Migration("20220812094450_addOrdersAndRefreshTokens")]
+    partial class addOrdersAndRefreshTokens
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,7 +48,7 @@ namespace WebShop.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("42ec246f-5be4-49b2-830f-698a25a8a807"),
+                            Id = new Guid("8606c6e7-7bc1-4831-905c-72ec3195c21e"),
                             Email = "admin@admin.com",
                             Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
                             Role = 0
@@ -70,6 +70,33 @@ namespace WebShop.Persistence.Migrations
                     b.ToTable("brands");
                 });
 
+            modelBuilder.Entity("WebShop.Domain.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("orders");
+                });
+
             modelBuilder.Entity("WebShop.Domain.Smartphone", b =>
                 {
                     b.Property<Guid>("Id")
@@ -87,12 +114,17 @@ namespace WebShop.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("smartphones");
                 });
@@ -144,6 +176,17 @@ namespace WebShop.Persistence.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
+            modelBuilder.Entity("WebShop.Domain.Order", b =>
+                {
+                    b.HasOne("WebShop.Domain.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("WebShop.Domain.Smartphone", b =>
                 {
                     b.HasOne("WebShop.Domain.Brand", null)
@@ -151,9 +194,18 @@ namespace WebShop.Persistence.Migrations
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("WebShop.Domain.Order", null)
+                        .WithMany("Smartphones")
+                        .HasForeignKey("OrderId");
                 });
 
             modelBuilder.Entity("WebShop.Domain.Brand", b =>
+                {
+                    b.Navigation("Smartphones");
+                });
+
+            modelBuilder.Entity("WebShop.Domain.Order", b =>
                 {
                     b.Navigation("Smartphones");
                 });

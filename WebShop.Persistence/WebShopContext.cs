@@ -28,5 +28,7 @@ namespace WebShop.Persistence
         public DbSet<Brand> brands { get; set; }
 
         public DbSet<Account> accounts { get; set; }
+
+        public DbSet<Order> orders { get; set; }
     }
 }
