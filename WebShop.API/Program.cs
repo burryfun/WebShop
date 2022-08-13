@@ -31,8 +31,10 @@ builder.Services.AddDbContext<WebShopContext>(options => options.UseSqlServer(co
 builder.Services.AddTransient<SmartphonesRepository>();
 builder.Services.AddTransient<BrandsRepository>();
 builder.Services.AddTransient<AccountRepository>();
+builder.Services.AddTransient<OrdersRepository>();
 
 builder.Services.AddTransient<AuthService>();
+builder.Services.AddTransient<CartService>();
 
 builder.Services.AddSwaggerGen();
 
