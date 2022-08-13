@@ -177,7 +177,12 @@ namespace WebShop.Application.Services
         public async Task<Account> CreateAsync(string email, string password)
         {
 
-            var account = await _accountRepository.CreateAsync(new Account { Email = email, Password = GetPasswordHashString(password), Role = Role.User });
+            var account = await _accountRepository.CreateAsync(
+                new Account { 
+                    Email = email, 
+                    Password = GetPasswordHashString(password), 
+                    Role = Role.User 
+                });
             return account;
         }
 
