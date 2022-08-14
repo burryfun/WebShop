@@ -1,10 +1,10 @@
 import React from 'react';
-import BrandNavList from '../components/BrandNavList';
+import BrandList from '../components/BrandList';
 
 const CatalogPage = () => {
     return (
         <div>
-            <BrandNavList />
+            <BrandList />
         </div>
     );
 };

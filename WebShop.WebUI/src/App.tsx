@@ -29,7 +29,7 @@ function App() {
       <div className='h-screen'>
         <Routes>
           <Route path="/" element={<Home/>} />
-          {/* <Route path="catalog" element={<CatalogPage/>} /> */}
+          <Route path="catalog" element={<CatalogPage/>} />
           {/* <Route path="catalog/:brandName" element={<BrandPage/>} /> */}
           {/* <Route path="catalog/:brandName/:smartphoneName" element={<SmartphonePage/>} /> */}
           <Route path="/register" element={<RegisterPage/>} />
