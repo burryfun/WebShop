@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props {
-    Id?: number;
+    Id?: string;
     Name?: string;
     Brand?: string;
     Description?: string;
@@ -11,9 +11,9 @@ interface Props {
 
 const SmartphoneCard = (props:Props) => {
     return (
-        <div className="max-w-sm bg-white rounded-lg shadow-md ">
+        <div className="max-w-sm bg-white rounded-lg shadow-md min-w-max">
             <a href="#">
-                <img className="p-1 rounded-t-lg w-52 h-52 mx-auto" src={`${process.env.REACT_APP_API_URL}/api/images/${props.Brand}?imageName=${props.Id}`} alt="product image" />
+                <img className="p-1 rounded-t-lg w-52 h-52 mx-auto" src={`${process.env.REACT_APP_API_URL}/images/${props.Brand}?imageName=${props.Id}`} alt="product image" />
             </a>
             <div className="px-5 pb-5">
                 <a href="#">

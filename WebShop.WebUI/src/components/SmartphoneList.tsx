@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ApiClient, Smartphone } from '../api/api';
+import { api } from '../api/api';
 import SmartphoneCard from './SmartphoneCard';
-
-const apiClient = new ApiClient(process.env.REACT_APP_API_URL)
 
 interface Props {
   brandName?: string;
@@ -11,22 +9,26 @@ interface Props {
 
 const SmartphoneList = ({ brandName }: Props) => {
 
-  const [smartphones, setSmartphones] = useState<Smartphone[] | null>(null)
+  const [smartphones, setSmartphones] = useState<api.ISmartphone[] | null>(null)
 
   useEffect(() => {
     if (brandName) {
-      apiClient.catalogAll(brandName).then(data => setSmartphones(data))
+      console.log(brandName);
+      const response = api.getSmartphones(brandName).then(data => setSmartphones(data));
+      console.log(response);
     }
   }, []);
 
   return (
-    <div className='grid gap-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
-      {smartphones?.map(smartphone => (
-        <Link to={'' + smartphone.id} key={smartphone.id} >
-          {/* {smartphone.name} */}
-          <SmartphoneCard Id={smartphone.id} Name={smartphone.name} Brand={brandName} Description={smartphone.description} Price={smartphone.price} />
-        </Link>
-      ))}
+    <div className='flex justify-center mx-auto w-full'>
+      <div className='grid gap-4 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2'>
+        {smartphones?.map(smartphone => (
+          <Link to={'' + smartphone.id} key={smartphone.id} >
+            {/* {smartphone.name} */}
+            <SmartphoneCard Id={smartphone.id} Name={smartphone.name} Brand={brandName} Description={smartphone.description} Price={smartphone.price} />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };
