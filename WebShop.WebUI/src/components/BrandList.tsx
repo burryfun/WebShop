@@ -11,12 +11,11 @@ const BrandNavList: FC = () => {
   }, []);
 
   return (
-    <div className='flex justify-center mx-auto'>
-      <div className='grid gap-3 lg:grid-cols-6 md:grid-cols-5 sm:grid-cols-4'>
+    <div className='flex justify-center mx-auto w-full'>
+      <div className='grid gap-10 lg:grid-cols-6 md:grid-cols-5 sm:grid-cols-4'>
         {brands?.map(brand =>
         (
           <Link to={"" + brand.name?.toLowerCase()} key={brand.name}>
-            {/* {brand.name} */}
             <BrandCard Id={brand.id} Name={brand.name} />
           </Link>
         ))}
