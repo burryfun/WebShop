@@ -7,6 +7,7 @@ namespace WebShop.Domain
         public Account Account { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
+        public decimal Total { get; set; }
         public DateTime Created { get; set; }
         public List<Smartphone> Smartphones { get; set; }
     }

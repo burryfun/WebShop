@@ -49,6 +49,7 @@ namespace WebShop.Application.Services
                 Address = request.Address,
                 Created = DateTime.UtcNow,
                 Phone = request.Phone,
+                Total = request.Total,
                 Smartphones = smartphones
             };
 
