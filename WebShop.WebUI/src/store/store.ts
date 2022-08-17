@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { comparer, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { api } from "../api/api";
 import { AuthService } from "../services/AuthService";
 

@@ -5,22 +5,26 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import Store from './store/store';
+import CartStore from './store/CartStore';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 )
 
 const store = new Store();
+const cartStore = new CartStore();
 
 export const Context = createContext({
   store,
+  cartStore
 })
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Context.Provider value={{
-        store
+        store,
+        cartStore
       }}>
         <App />
       </Context.Provider>

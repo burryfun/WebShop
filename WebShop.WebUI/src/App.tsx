@@ -12,10 +12,12 @@ import RegisterPage from './pages/RegisterPage';
 import ErrorPage from './pages/ErrorPage';
 import SuccessfulRegistrationPage from './pages/SuccessfulRegistrationPage';
 import AdminPage from './pages/Admin/AdminPage';
+import CartPage from './pages/Cart/CartPage';
 
 function App() {
 
   const {store} = useContext(Context);
+  const {cartStore} = useContext(Context);
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -24,9 +26,9 @@ function App() {
   }, [])
 
   return (
-    <div className="App my-0 mx-auto max-w-full bg-light">
+    <div className="App my-0 mx-auto max-w-full bg-light min-h-screen h-auto">
       <Header />
-      <div className='h-screen'>
+      <div className=''>
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="catalog" element={<CatalogPage/>} />
@@ -36,6 +38,7 @@ function App() {
           <Route path="/error" element={<ErrorPage/>} />
           <Route path="/successfulRegistration" element={<SuccessfulRegistrationPage/>} />
           <Route path="/admin" element={<AdminPage/>} />
+          <Route path="/cart" element={<CartPage/>} />
         </Routes>
       </div>
     </div>

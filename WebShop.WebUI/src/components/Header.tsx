@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '..';
 import ss_logo from '../assets/ss_logo.svg'
 import LoginFormModal from '../modals/LoginFormModal';
+import CartStore from '../store/CartStore';
 
 const Header = () => {
 
+  const { cartStore } = useContext(Context);
+
   return (
-    <div className='border-x-4 border-b-4 rounded-b-3xl py-2 max-w-5xl bg-teal border-green mx-auto mb-4'>
+    <div className='border-x-4 border-b-4 rounded-b-3xl py-2 max-w-7xl bg-teal border-green mx-auto mb-4'>
       <nav className="px-4">
         <div className="container flex flex-wrap items-center justify-between mx-auto max-w-none">
           <Link to={'/'}>
@@ -30,8 +35,9 @@ const Header = () => {
               <li className='self-center text-base hover:text-green'>
                 <Link to={'/catalog'}>Catalog</Link>
               </li>
-              <Link to={'/cart'}>
+              <Link className='inline-flex relative items-center' to={'/cart'}>
                 <li className='bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center'>Cart</li>
+                <div className="inline-flex absolute -top-2 -right-2 justify-center items-center w-6 h-6 text-xs font-semibold text-white bg-red rounded-full border-2 border-red">{cartStore.count}</div>
               </Link>
               <LoginFormModal />
             </ul>
@@ -42,4 +48,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default observer(Header);

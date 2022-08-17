@@ -6,6 +6,7 @@ module.exports = {
   theme: {
     extend: {},
     screens: {
+      'xs': '360px',
       'sm': '480px',
       'md': '768px',
       'lg': '976px',
@@ -16,12 +17,13 @@ module.exports = {
       light: '#f2f2f2',
       blue: '#2b6777',
       green: '#52ab98',
+      emerald: '#059669',
       teal: '#f0fdfa',
       black: '#000000',
       gray_100: '#F3F4F6',
       gray_300: '#D1D5DB',
       gray_500: '#6B7280',
-      red: '#dc2626'
+      red: '#dc2626',
       
     }
   },
