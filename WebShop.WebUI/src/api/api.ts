@@ -65,6 +65,7 @@ export namespace api {
     const response = await $api.post(`/catalog/${brandName}`, smartphone);
     return response.data;
   }
+  
   export const postSmartphoneImage = async (brandName: string, smartphoneImage: IImage) => {
     const response = await $api.post(`/images/${brandName}`, smartphoneImage, {
       headers: {
@@ -74,15 +75,27 @@ export namespace api {
     return response.data;
   }
 
+
+  // Cart requests
+  export const getCart = async (smartphonesId:string[]) => {
+    const response = await $api.post<ICartResponse[]>('/cart', {smartphonesId});
+    return response.data;
+  }
+
+  export const checkout = async (request:ICheckoutRequest) => {
+    const response = await $api.post<ICheckoutResponse[]>('/checkout', request);
+    return response.data;
+  }
+
   // MODELS
   export interface IBrand {
-    id?: string;
+    id: string;
     name: string;
     smartphones?: ISmartphone[];
   }
 
   export interface ISmartphone {
-    id?: string;
+    id: string;
     name: string;
     description: string;
     price: number;
@@ -93,6 +106,26 @@ export namespace api {
     message: string;
     jwtToken: string;
     refreshToken: string;
+  }
+
+  export interface ICartResponse {
+    smartphoneId: string;
+    smartphoneName: string;
+    smartphonePrice: number;
+    brandName: string;
+  }
+
+  export interface ICheckoutRequest {
+    phone: string;
+    address: string;
+    total: number;
+    smartphonesId: string[];
+  }
+
+  export interface ICheckoutResponse {
+    isSuccess: boolean;
+    message: string;
+    smartphones: ISmartphone[];
   }
 
   export interface IImage {
