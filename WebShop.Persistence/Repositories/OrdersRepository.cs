@@ -1,4 +1,5 @@
 ﻿using WebShop.Domain;
+using WebShop.Domain.Dto;
 
 namespace WebShop.Persistence.Repositories
 {
@@ -28,6 +29,20 @@ namespace WebShop.Persistence.Repositories
         {
             var order = _context.orders.FirstOrDefault(x => x.Id == id);
             return order;
+        }
+
+        public IEnumerable<OrderDto> GetAllByAccountId(Guid accountId)
+        {
+            var orders = _context.orders.Where(x => x.Account.Id == accountId).Select(x => new OrderDto
+            {
+                Address = x.Address,
+                Created = x.Created.ToLongDateString(),
+                Phone = x.Phone,
+                Smartphones = x.Smartphones,
+                Total = x.Total,
+            });
+
+            return orders;
         }
 
         public bool Delete(Guid id)
