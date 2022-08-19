@@ -8,7 +8,9 @@ import CartStore from '../store/CartStore';
 
 const Header = () => {
 
-  const { cartStore } = useContext(Context);
+  const { cartStore, store } = useContext(Context);
+
+
 
   return (
     <div className='border-x-4 border-b-4 rounded-b-3xl py-2 max-w-7xl bg-teal border-green mx-auto mb-4'>
@@ -39,6 +41,11 @@ const Header = () => {
                 <li className='bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center'>Cart</li>
                 <div className="inline-flex absolute -top-2 -right-2 justify-center items-center w-6 h-6 text-xs font-semibold text-white bg-red rounded-full border-2 border-red">{cartStore.count}</div>
               </Link>
+              {store.isAuth ?
+                <li className='bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center'>
+                  <Link to={'/myorders'}>My Orders</Link>
+                </li>
+                : null}
               <LoginFormModal />
             </ul>
           </div>

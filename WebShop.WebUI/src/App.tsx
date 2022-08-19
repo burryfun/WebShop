@@ -13,6 +13,7 @@ import ErrorPage from './pages/ErrorPage';
 import SuccessfulRegistrationPage from './pages/SuccessfulRegistrationPage';
 import AdminPage from './pages/Admin/AdminPage';
 import CartPage from './pages/Cart/CartPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 
 function App() {
 
@@ -39,6 +40,7 @@ function App() {
           <Route path="/successfulRegistration" element={<SuccessfulRegistrationPage/>} />
           <Route path="/admin" element={<AdminPage/>} />
           <Route path="/cart" element={<CartPage/>} />
+          <Route path="/myorders" element={<MyOrdersPage/>} />
         </Routes>
       </div>
     </div>

@@ -78,12 +78,17 @@ export namespace api {
 
   // Cart requests
   export const getCart = async (smartphonesId:string[]) => {
-    const response = await $api.post<ICartResponse[]>('/cart', {smartphonesId});
+    const response = await $api.post<ICart[]>('/cart', {smartphonesId});
     return response.data;
   }
 
   export const checkout = async (request:ICheckoutRequest) => {
     const response = await $api.post<ICheckoutResponse[]>('/checkout', request);
+    return response.data;
+  }
+
+  export const getMyOrders = async () => {
+    const response = await $api.get<IOrder[]>('/myorders');
     return response.data;
   }
 
@@ -108,7 +113,7 @@ export namespace api {
     refreshToken: string;
   }
 
-  export interface ICartResponse {
+  export interface ICart {
     smartphoneId: string;
     smartphoneName: string;
     smartphonePrice: number;
@@ -131,6 +136,22 @@ export namespace api {
   export interface IImage {
     name?: string;
     image?: File;
+  }
+
+  /*
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public decimal Total { get; set; }
+        public DateTime Created { get; set; }
+        public List<Smartphone> Smartphones { get; set; }
+         */
+
+  export interface IOrder {
+    phone: string;
+    address: string;
+    total: number;
+    created: string;
+    smartphones: ISmartphone[];
   }
 }
 

@@ -6,7 +6,7 @@ export default class CartStore {
   
   smartphonesId:string[] = [];
   count:number = 0;
-  smartphones:api.ICartResponse[] = [];
+  smartphones:api.ICart[] = [];
 
   constructor() {
     makeAutoObservable(this);
