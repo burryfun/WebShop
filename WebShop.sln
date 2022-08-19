@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShop.API", "WebShop.API\WebShop.API.csproj", "{2616004C-559A-4700-9B4D-D704AAD6CC0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.API", "WebShop.API\WebShop.API.csproj", "{2616004C-559A-4700-9B4D-D704AAD6CC0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShop.Persistence", "WebShop.Persistence\WebShop.Persistence.csproj", "{495607F9-F94C-42F7-8EC4-ED55CBF2FCDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Persistence", "WebShop.Persistence\WebShop.Persistence.csproj", "{495607F9-F94C-42F7-8EC4-ED55CBF2FCDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShop.Application", "WebShop.Application\WebShop.Application.csproj", "{D64C9854-8DB6-4A5A-A606-A8A783173F21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Application", "WebShop.Application\WebShop.Application.csproj", "{D64C9854-8DB6-4A5A-A606-A8A783173F21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShop.Domain", "WebShop.Domain\WebShop.Domain.csproj", "{A19ECC87-861C-4A76-9B81-15F67600E090}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Domain", "WebShop.Domain\WebShop.Domain.csproj", "{A19ECC87-861C-4A76-9B81-15F67600E090}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShop.Tests", "WebShop.Tests\WebShop.Tests.csproj", "{D7891F10-A901-4D8F-9DBD-5F6B230AE1F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A19ECC87-861C-4A76-9B81-15F67600E090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A19ECC87-861C-4A76-9B81-15F67600E090}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A19ECC87-861C-4A76-9B81-15F67600E090}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7891F10-A901-4D8F-9DBD-5F6B230AE1F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7891F10-A901-4D8F-9DBD-5F6B230AE1F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7891F10-A901-4D8F-9DBD-5F6B230AE1F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7891F10-A901-4D8F-9DBD-5F6B230AE1F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

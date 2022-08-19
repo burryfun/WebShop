@@ -83,8 +83,14 @@ export namespace api {
   }
 
   export const checkout = async (request:ICheckoutRequest) => {
-    const response = await $api.post<ICheckoutResponse[]>('/checkout', request);
-    return response.data;
+    try {
+      const response = await $api.post<ICheckoutResponse[]>('/checkout', request);
+      return response;
+    } catch(e) {
+      const err = e as AxiosError<api.IAuthResponse>;
+      console.log(err);
+      return err;
+    }
   }
 
   export const getMyOrders = async () => {

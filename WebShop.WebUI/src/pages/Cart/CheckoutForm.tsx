@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Context } from '../..';
 import { api } from '../../api/api';
+import { useNavigate } from 'react-router-dom';
 
 const CheckoutForm = () => {
 
@@ -8,6 +9,7 @@ const CheckoutForm = () => {
   const [address, setAddress] = useState<string>('');
 
   const { cartStore } = useContext(Context);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // prevent page refresh
@@ -19,6 +21,11 @@ const CheckoutForm = () => {
       total: cartStore.getTotalPrice(),
       smartphonesId: cartStore.smartphonesId
     })
+
+    if (result.status == 200) {
+      navigate("/successfulCheckout");
+      cartStore.clear();
+    }
 
   }
 
