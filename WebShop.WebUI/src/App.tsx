@@ -14,6 +14,7 @@ import SuccessfulRegistrationPage from './pages/SuccessfulRegistrationPage';
 import AdminPage from './pages/Admin/AdminPage';
 import CartPage from './pages/Cart/CartPage';
 import MyOrdersPage from './pages/MyOrdersPage';
+import SuccessfulCheckoutPage from './pages/SuccessfulCheckoutPage';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/admin" element={<AdminPage/>} />
           <Route path="/cart" element={<CartPage/>} />
           <Route path="/myorders" element={<MyOrdersPage/>} />
+          <Route path="/successfulCheckout" element={<SuccessfulCheckoutPage/>} />
         </Routes>
       </div>
     </div>
