@@ -7,7 +7,6 @@ import CheckoutForm from './CheckoutForm';
 
 const SmartphoneList = () => {
 
-  const [response, setResponse] = useState<api.ICartResponse[] | null>(null);
   const [deletedSmartphoneId, setDeletedSmartphoneId] = useState<string | undefined>('');
 
   const { cartStore } = useContext(Context);
@@ -27,19 +26,19 @@ const SmartphoneList = () => {
     <>
       {cartStore.count ?
         <div className='flex justify-center mx-auto w-full'>
-          <div className='grid grid-cols-7 gap-4 my-1 items-start text-center'>
-            <div className='grid gap-4 lg:col-span-3 sm:col-span-5 xs:col-span-5'>
+          <div className='grid grid-cols-11 gap-4 my-1 items-start text-center'>
+            <div className='grid gap-4 lg:col-start-3 sm:col-start-2 xs:col-start-1 lg:col-span-4 sm:col-span-8 xs:col-span-11'>
               {cartStore.smartphones?.map((smartphone) => (
                 <>
                   {(deletedSmartphoneId === smartphone.smartphoneId) ? null :
-                    <div key={smartphone.smartphoneId} className='grid grid-cols-3 col-start-1 border px-4 py-0 rounded-lg bg-teal'>
+                    <div key={smartphone.smartphoneId} className='grid grid-cols-3 border px-4 py-0 rounded-lg bg-teal'>
                       <div>
                         <img className="p-1 rounded-t-lg lg:w-40 lg:h-40 md:w-32 md:h-32 xs:w-20 xs:h-20 mx-auto"
                           src={`${process.env.REACT_APP_API_URL}/images/${smartphone.brandName}?imageName=${smartphone.smartphoneId}`} />
                       </div>
-                      <div className='flex justify-around self-center text-lg font-semibold'>
+                      <div className='flex justify-around self-center text-lg font-semibold items-center'>
                         <span>{smartphone.smartphoneName}</span>
-                        <span>${smartphone.smartphonePrice}</span>
+                        <span className='px-4'>${smartphone.smartphonePrice}</span>
                       </div>
                       <div className='self-center'>
                         <button type='button' className=' bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center font-semibold'
@@ -54,7 +53,7 @@ const SmartphoneList = () => {
                 </>
               ))}
             </div>
-            <div className='lg:col-span-4 sm:col-span-5 xs:col-span-5'>
+            <div className='lg:col-start-7 sm:col-start-2 xs:col-start-1 lg:col-span-3 sm:col-span-8 xs:col-span-11'>
               <CheckoutForm />
             </div>
           </div>
