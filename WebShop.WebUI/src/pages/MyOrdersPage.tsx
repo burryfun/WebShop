@@ -22,6 +22,9 @@ const MyOrdersPage = () => {
                 Address
               </th>
               <th scope="col" className="py-3 px-6">
+                Phone
+              </th>
+              <th scope="col" className="py-3 px-6">
                 Price
               </th>
             </tr>
@@ -35,6 +38,9 @@ const MyOrdersPage = () => {
                 <td className="py-4 px-6">
                   {order.address}
                 </td>
+                <td className="py-4 px-6">
+                  +7{order.phone}
+                </td>
                 <td className="py-4 px-6 font-medium">
                   ${order.total}
                 </td>
@@ -43,6 +49,8 @@ const MyOrdersPage = () => {
                 <tr className="bg-gray_500 bg-opacity-20 border-b border-gray_300">
                   <td className="py-2 px-14 font-medium whitespace-nowrap">
                     {smartphone.name}
+                  </td>
+                  <td>
                   </td>
                   <td>
                   </td>
