@@ -21,8 +21,13 @@ export default class Store {
   async login(email: string, password: string) {
     try {
       const response = await AuthService.login(email, password);
-      localStorage.setItem('token', response?.data.jwtToken);
+      const token = response.data.jwtToken;
+      const parsedToken:api.IJwt = api.parseToken(token);
+      
+      localStorage.setItem('tokenExpiry', (parsedToken.exp * 1000).toString());
+      localStorage.setItem('token', token);
       this.setAuth(true);
+
       return response;
     } catch (e) {
       const err = e as AxiosError<api.IAuthResponse>;
@@ -45,19 +50,17 @@ export default class Store {
   async logout() {
     try {
       const response = await AuthService.logout();
-
       if (response.status === 200) {
         localStorage.removeItem('token');
+        localStorage.removeItem('tokenExpiry');
         this.setAuth(false);
       }
-
       return response;
     } catch (e) {
       const err = e as AxiosError<api.IAuthResponse>;
       this.handleError(err);
       return err;
     }
-
   }
 
   handleError(err: AxiosError<api.IAuthResponse>) {
@@ -68,10 +71,22 @@ export default class Store {
   }
 
   async checkAuth() {
-    const response = await axios.post<api.IAuthResponse>(`${api.API_URL}/refresh-token`, {}, { withCredentials: true });
-    if (response.data.isSuccess) {
-      localStorage.setItem('token', response.data.jwtToken);
+    const tokenExpiry = Number(localStorage.getItem('tokenExpiry'));
+    if (tokenExpiry) {
       this.setAuth(true);
+    }
+    if (tokenExpiry - Date.now() <= 5000) {
+      const response = await axios.post<api.IAuthResponse>(`${api.API_URL}/refresh-token`, {}, { withCredentials: true });
+      if (response.data.isSuccess) {
+        const token = response.data.jwtToken;
+        const parsedToken: api.IJwt = api.parseToken(token);
+        localStorage.setItem('token', token);
+        localStorage.setItem('tokenExpiry', (parsedToken.exp * 1000).toString());
+        this.setAuth(true);
+      }
+      else {
+        this.setAuth(false);
+      }
     }
   }
 }

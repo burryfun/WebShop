@@ -9,6 +9,21 @@ export namespace api {
     baseURL: API_URL
   })
 
+
+
+  export const parseToken = (accessToken: string): any => {
+    let payload = '';
+    let tokenData = {};
+
+    try {
+      payload = accessToken.split('.')[1];
+      tokenData = JSON.parse(atob(payload));
+    } catch (e: any) {
+      throw new Error(e);
+    }
+    return tokenData
+  }
+
   $api.interceptors.request.use((config) => {
     if (!config?.headers) {
       throw new Error(`Expected 'config' and 'config.headers' not to be undefined`);
@@ -25,8 +40,18 @@ export namespace api {
     if (error.response?.status == 401 && error.config && !originalRequest._isRetry) {
       originalRequest._isRetry = true;
       try {
-        const response = await axios.post<api.IAuthResponse>(`${api.API_URL}/refresh-token`, {}, { withCredentials: true });
-        localStorage.setItem('token', response.data.jwtToken);
+        const response = axios.post<api.IAuthResponse>(`${api.API_URL}/refresh-token`, {}, { withCredentials: true });
+        const token = (await response).data.jwtToken;
+        const parsedToken: IJwt = api.parseToken(token);
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('tokenExpiry', (parsedToken.exp * 1000).toString());
+
+        if (!error.config?.headers) {
+          throw new Error(`Expected 'config' and 'config.headers' not to be undefined`);
+        }
+        error.config.headers['Authorization'] = `Bearer ${token}`;
+        return axios.request(error.config);
       } catch (e) {
         console.log('NOT AUTHORIZED');
       }
@@ -65,7 +90,7 @@ export namespace api {
     const response = await $api.post(`/catalog/${brandName}`, smartphone);
     return response.data;
   }
-  
+
   export const postSmartphoneImage = async (brandName: string, smartphoneImage: IImage) => {
     const response = await $api.post(`/images/${brandName}`, smartphoneImage, {
       headers: {
@@ -77,16 +102,16 @@ export namespace api {
 
 
   // Cart requests
-  export const getCart = async (smartphonesId:string[]) => {
-    const response = await $api.post<ICart[]>('/cart', {smartphonesId});
+  export const getCart = async (smartphonesId: string[]) => {
+    const response = await $api.post<ICart[]>('/cart', { smartphonesId });
     return response.data;
   }
 
-  export const checkout = async (request:ICheckoutRequest) => {
+  export const checkout = async (request: ICheckoutRequest) => {
     try {
       const response = await $api.post<ICheckoutResponse[]>('/checkout', request);
       return response;
-    } catch(e) {
+    } catch (e) {
       const err = e as AxiosError<api.IAuthResponse>;
       console.log(err);
       return err;
@@ -159,5 +184,13 @@ export namespace api {
     created: string;
     smartphones: ISmartphone[];
   }
+
+  export interface IJwt {
+    exp: number;
+    iat: string;
+    id: string;
+    nbf: string;
+  }
+
 }
 
