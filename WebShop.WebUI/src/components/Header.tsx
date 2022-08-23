@@ -42,9 +42,7 @@ const Header = () => {
                 <div className="inline-flex absolute -top-2 -right-2 justify-center items-center w-6 h-6 text-xs font-semibold text-white bg-red rounded-full border-2 border-red">{cartStore.count}</div>
               </Link>
               {store.isAuth ?
-                <li className='bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center'>
-                  <Link to={'/myorders'}>My Orders</Link>
-                </li>
+                  <Link to={'/myorders'} className='bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center'>My Orders</Link>
                 : null}
               <LoginFormModal />
             </ul>

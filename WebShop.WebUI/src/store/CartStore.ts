@@ -16,7 +16,6 @@ export default class CartStore {
   getCart() {
     const response = CartService.getCart();
     response?.then(data => this.smartphones = data);
-    console.log('test');
   }
 
   add(item:string) {
