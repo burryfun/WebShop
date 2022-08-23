@@ -20,7 +20,7 @@ namespace WebShop.API.Controllers
         }
 
         [HttpPost("api/cart")]
-        public async Task<IActionResult> GetCart([FromBody] CartRequest request)
+        public IActionResult GetCart([FromBody] CartRequest request)
         {
 
             if (request == null)
