@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using WebShop.API.Helpers;
 using WebShop.Domain;
 using WebShop.Persistence.Repositories;
 
@@ -19,7 +22,7 @@ namespace WebShop.API.Controllers
         }
 
         [HttpGet("/api/catalog/{brandName}")]
-        public ActionResult<List<Smartphone>> GetSmartphonesByBrand(string brandName)
+        public async Task<ActionResult<List<Smartphone>>> GetSmartphonesByBrand(string brandName, [FromQuery] PageParameters pageParameters)
         {
             var brand = _brandsRepository.GetByName(brandName);
 
@@ -28,7 +31,19 @@ namespace WebShop.API.Controllers
                 return NotFound();
             }
 
-            var smartphones = _smartphonesRepository.GetAllByBrandId(brand.Id);
+            var validParameters = new PageParameters(pageParameters.PageNumber, pageParameters.PageSize);
+
+            var smartphonesByBrandId = _smartphonesRepository.GetAllByBrandId(brand.Id);
+
+            var smartphones = await PaginatedList<Smartphone>.CreateAsync(smartphonesByBrandId, validParameters.PageNumber, validParameters.PageSize);
+
+            var metadata = new
+            {
+                totalPages = smartphones.TotalPages,
+                pageIndex = smartphones.PageIndex,
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
             return Ok(smartphones);
         }

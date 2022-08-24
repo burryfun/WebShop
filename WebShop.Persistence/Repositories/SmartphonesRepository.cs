@@ -52,9 +52,9 @@ namespace WebShop.Persistence.Repositories
             return _context.smartphones;
         }
 
-        public IEnumerable<Smartphone> GetAllByBrandId(Guid brandId)
+        public IQueryable<Smartphone> GetAllByBrandId(Guid brandId)
         {
-            var smartphonesByBrandId = _context.smartphones.Where(x => x.BrandId == brandId).ToList();
+            var smartphonesByBrandId = _context.smartphones.Where(x => x.BrandId == brandId);
             return smartphonesByBrandId;
         }
 
