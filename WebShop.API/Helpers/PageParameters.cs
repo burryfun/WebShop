@@ -2,7 +2,7 @@
 {
     public class PageParameters
     {
-        const int maxPageSize = 5;
+        const int maxPageSize = 50;
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public PageParameters()
