@@ -26,7 +26,13 @@ builder.Services.AddCors(options =>
 });
 
 string connection = builder.Configuration.GetConnectionString("WebShopDB");
-builder.Services.AddDbContext<WebShopContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<WebShopContext>(options => {
+    options.UseSqlServer(connection, builder =>
+    {
+        //builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+    });
+});
+
 
 builder.Services.AddTransient<SmartphonesRepository>();
 builder.Services.AddTransient<BrandsRepository>();
@@ -42,7 +48,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -57,5 +63,7 @@ app.UseAuthorization();
 app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
+
+MigrationManager.MigrateDatabase(app);
 
 app.Run();
