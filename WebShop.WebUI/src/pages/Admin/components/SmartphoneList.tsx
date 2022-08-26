@@ -12,7 +12,7 @@ const SmartphoneList = (props: Props) => {
   const [smartphones, setSmartphones] = useState<api.ISmartphone[] | null>(null);
 
   useEffect(() => {
-    api.getSmartphones(props.brandName).then(data => setSmartphones(data));
+    api.getSmartphones(props.brandName).then(response => setSmartphones(response.data));
   }, []);
 
   return (

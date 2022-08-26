@@ -81,9 +81,14 @@ export namespace api {
   }
 
 
-  export const getSmartphones = async (brandName: string) => {
-    const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}`);
-    return response.data;
+  export const getSmartphones = async (brandName: string, pageParameters?: IPageParameters) => {
+    if (pageParameters) {
+      const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}?PageNumber=${pageParameters.pageNumber}&PageSize=${pageParameters.pageSize}`);
+      return response;
+    } else {
+      const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}`);
+      return response;
+    }
   }
 
   export const postSmartphone = async (brandName: string, smartphone: ISmartphone) => {
@@ -169,20 +174,17 @@ export namespace api {
     image?: File;
   }
 
-  /*
-        public string Phone { get; set; }
-        public string Address { get; set; }
-        public decimal Total { get; set; }
-        public DateTime Created { get; set; }
-        public List<Smartphone> Smartphones { get; set; }
-         */
-
   export interface IOrder {
     phone: string;
     address: string;
     total: number;
     created: string;
     smartphones: ISmartphone[];
+  }
+
+  export interface IPageParameters {
+    pageNumber: number;
+    pageSize: number;
   }
 
   export interface IJwt {
