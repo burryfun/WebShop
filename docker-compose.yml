@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  webshop.db:
+    container_name: webshop.db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    volumes:
+      - ./WebShop.Persistence/backup:/var/opt/mssql/backup
+
+  webshop.api:
+    container_name: webshop.api
+    image: ${DOCKER_REGISTRY-}webshopapi
+    build:
+      context: .
+      dockerfile: WebShop.API/Dockerfile
+    depends_on:
+      - webshop.db
+
+  webshop.ui:
+    container_name: webshop.ui
+    image: webshopui
+    build:
+      context: ./WebShop.WebUI
+      dockerfile: Dockerfile
+
+  proxy:
+    container_name: webshop.nginx
+    image: nginx:mainline
