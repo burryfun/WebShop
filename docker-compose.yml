@@ -13,8 +13,11 @@ services:
     build:
       context: .
       dockerfile: WebShop.API/Dockerfile
-    depends_on:
-      - webshop.db
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
 
   webshop.ui:
     container_name: webshop.ui
@@ -26,3 +29,9 @@ services:
   proxy:
     container_name: webshop.nginx
     image: nginx:mainline
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
+        window: 60s

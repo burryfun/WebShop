@@ -29,7 +29,7 @@ string connection = builder.Configuration.GetConnectionString("WebShopDB");
 builder.Services.AddDbContext<WebShopContext>(options => {
     options.UseSqlServer(connection, builder =>
     {
-        //builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
     });
 });
 
