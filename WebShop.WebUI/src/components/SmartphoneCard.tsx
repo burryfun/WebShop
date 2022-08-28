@@ -20,7 +20,7 @@ const SmartphoneCard = (props: Props) => {
       <a href="#">
         <img className="p-1 rounded-t-lg w-52 h-52 mx-auto" src={`${process.env.REACT_APP_API_URL}/images/${props.Brand}?imageName=${props.Id}`} alt="product image" />
       </a>
-      <div className="px-5 pb-5">
+      <div className="px-5 pb-5 w-60">
         <a href="#">
           <h5 className="text-xl font-semibold tracking-tight text-gray-900">{props.Name}</h5>
           <h6 className='text-base font-normal tracking-tight text-gray-900'>{props.Description}</h6>

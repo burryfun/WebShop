@@ -11,7 +11,7 @@ const MyOrdersPage = () => {
 
   return (
     <div className='grid grid-cols-6'>
-      <div className="overflow-x-auto relative lg:col-start-2 lg:col-span-4 xs:col-span-6">
+      <div className="overflow-x-auto relative lg:col-start-2 lg:col-span-4 xs:col-span-6 rounded-2xl">
         <table className="w-full text-sm text-left text-gray-500 ">
           <thead className="text-xs text-gray-700 uppercase bg-teal">
             <tr>

@@ -28,7 +28,7 @@ function App() {
   }, [])
 
   return (
-    <div className="App my-0 mx-auto max-w-full bg-light min-h-screen h-auto">
+    <div className="App my-0 mx-auto max-w-full bg-gray_300 min-h-screen h-auto">
       <Header />
       <div className=''>
         <Routes>
