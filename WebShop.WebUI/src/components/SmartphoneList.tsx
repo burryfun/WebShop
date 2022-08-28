@@ -19,7 +19,7 @@ const SmartphoneList = ({ brandName }: Props) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 15;
 
   useEffect(() => {
 
