@@ -71,6 +71,11 @@ export namespace api {
     return response.data;
   }
 
+  export const deleteBrand = async (brandId: string) => {
+    const response = await $api.delete(`/catalog?id=${brandId}`);
+    return response.data;
+  }
+
   export const postBrandImage = async (brandImage: IImage) => {
     const response = await $api.post('/images', brandImage, {
       headers: {
@@ -93,6 +98,11 @@ export namespace api {
 
   export const postSmartphone = async (brandName: string, smartphone: ISmartphone) => {
     const response = await $api.post(`/catalog/${brandName}`, smartphone);
+    return response.data;
+  }
+
+  export const deleteSmartphone = async (brandName: string, smartphoneId: string) => {
+    const response = await $api.delete(`/catalog/${brandName}?SmartphoneId=${smartphoneId}`);
     return response.data;
   }
 
