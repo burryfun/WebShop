@@ -21,6 +21,9 @@ const AddBrandModal = () => {
       if (brandImage) {
         api.postBrandImage({name: brandId, image: brandImage[0]});
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch(e) {
       console.log(e);
     }

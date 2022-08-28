@@ -7,7 +7,7 @@ interface Props {
   brandName: string;
 }
 
-const AddSmartphoneModal = (props:Props) => {
+const AddSmartphoneModal = (props: Props) => {
 
   const [name, setName] = useState<string>('');
   const [price, setPrice] = useState<number>(0);
@@ -22,12 +22,15 @@ const AddSmartphoneModal = (props:Props) => {
 
     const smartphoneId = Guid.create().toString();
 
-    try{
-      api.postSmartphone(props.brandName, {id:smartphoneId, name: name, price: price, description: description});
-      if(image) {
-        api.postSmartphoneImage(props.brandName, {name:smartphoneId, image: image[0]});
+    try {
+      api.postSmartphone(props.brandName, { id: smartphoneId, name: name, price: price, description: description });
+      if (image) {
+        api.postSmartphoneImage(props.brandName, { name: smartphoneId, image: image[0] });
       }
-    } catch(e) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    } catch (e) {
       console.log(e);
     }
 
