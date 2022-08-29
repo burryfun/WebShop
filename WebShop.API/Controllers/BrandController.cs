@@ -49,7 +49,7 @@ namespace WebShop.API.Controllers
         }
 
         [HttpPost("/api/catalog/{brandName}")]
-        public ActionResult AddSmartphoneToBrand(string brandName, [FromBody]Smartphone smartphone)
+        public ActionResult AddSmartphoneToBrand(string brandName, [FromBody] Smartphone smartphone)
         {
             var brand = _brandsRepository.GetByName(brandName.ToLower());
 
@@ -59,12 +59,14 @@ namespace WebShop.API.Controllers
             }
 
             _smartphonesRepository.Create(
-                new Smartphone
+                new Smartphone()
                 {
                     Id = smartphone.Id,
                     Name = smartphone.Name,
                     Description = smartphone.Description,
                     Price = smartphone.Price,
+                    Discount = smartphone.Discount,
+                    Amount = smartphone.Price * (1 - (decimal)smartphone.Discount / 100),
                     BrandId = brand.Id
                 });
 
@@ -72,7 +74,7 @@ namespace WebShop.API.Controllers
         }
 
         [HttpPut("api/catalog/{brandName}")]
-        public ActionResult UpdateSmartphone(string brandName, Smartphone smartphone)
+        public ActionResult UpdateSmartphone(string brandName, [FromBody] Smartphone smartphone)
         {
             var brand = _brandsRepository.GetByName(brandName.ToLower());
 
@@ -87,10 +89,12 @@ namespace WebShop.API.Controllers
             }
 
             var changedSmartphone = _smartphonesRepository.GetById(smartphone.Id);
-            
+
             changedSmartphone.Name = smartphone.Name;
             changedSmartphone.Description = smartphone.Description;
             changedSmartphone.Price = smartphone.Price;
+            changedSmartphone.Discount = smartphone.Discount;
+            changedSmartphone.Amount = smartphone.Price * (1 - (decimal)smartphone.Discount / 100);
 
             _smartphonesRepository.Update(changedSmartphone);
 
