@@ -11,6 +11,8 @@ const AddSmartphoneModal = (props: Props) => {
 
   const [name, setName] = useState<string>('');
   const [price, setPrice] = useState<number>(0);
+  const [discount, setDiscount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState<string>('');
   const [image, setImage] = useState<FileList | null>(null);
 
@@ -23,7 +25,7 @@ const AddSmartphoneModal = (props: Props) => {
     const smartphoneId = Guid.create().toString();
 
     try {
-      api.postSmartphone(props.brandName, { id: smartphoneId, name: name, price: price, description: description });
+      api.postSmartphone(props.brandName, { id: smartphoneId, name: name, price: price, discount: discount, amount: amount, description: description });
       if (image) {
         api.postSmartphoneImage(props.brandName, { name: smartphoneId, image: image[0] });
       }
@@ -87,14 +89,52 @@ const AddSmartphoneModal = (props: Props) => {
                       />
                     </div>
                     <div>
-                      <label className="block mb-2 text-sm font-medium text-black">Цена</label>
-                      <input
-                        className='bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5'
-                        onChange={e => setPrice(Number(e.target.value))}
-                        value={price}
-                        placeholder='1000'
-                        required
-                      />
+
+                      <div className='flex items-center'>
+                        <div>
+                          <label className="block mb-2 text-sm font-medium text-black">Цена($)</label>
+                          <input
+                            className='bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5'
+                            onChange={e => {
+                              setPrice(Number(e.target.value));
+                              setAmount(Number(e.target.value) * (1 - discount/100))
+                            }}
+                            value={price}
+                            placeholder='1000'
+                            type='text'
+                            pattern='\d*'
+                            maxLength={5}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-2 text-sm font-medium text-black">Скидка(%)</label>
+                          <input
+                            className='bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5'
+                            onChange={e => {
+                              setDiscount(Number(e.target.value));
+                              setAmount(price * (1 - Number(e.target.value)/100))
+                            }}
+                            value={discount}
+                            placeholder='10'
+                            type='text'
+                            pattern='\d*'
+                            maxLength={2}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-2 text-sm font-medium text-black">Сумма($)</label>
+                          <input
+                            className='bg-gray_100 border border-gray_300 text-black text-sm rounded-lg focus:ring-dark focus:!border-dark block w-full p-2.5'
+                            value={Number(price * (1 - discount/100)).toFixed(2)}
+                            placeholder='1000'
+                            readOnly
+                          />
+                        </div>
+
+                      </div>
+
                     </div>
                     <div>
                       <label className="block mb-2 text-sm font-medium text-black">Описание</label>

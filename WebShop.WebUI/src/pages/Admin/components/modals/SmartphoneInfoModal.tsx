@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { api } from '../../../../api/api';
 
 interface Props {
@@ -10,6 +10,12 @@ const SmartphoneInfoModal = (props: Props) => {
 
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
 
+  const [name, setName] = useState<string>(props.Smartphone.name);
+  const [price, setPrice] = useState<number>(props.Smartphone.price);
+  const [discount, setDiscount] = useState<number>(props.Smartphone.discount);
+  const [amount, setAmount] = useState<number>(props.Smartphone.amount!);
+  const [description, setDescription] = useState<string>(props.Smartphone.description);
+
   // Disable opacity background and scaling modal form if click to outisde from form
   const isOnClickOutsideTargetContainer = true;
   const targetContainer = useRef<HTMLDivElement>(null);
@@ -18,6 +24,24 @@ const SmartphoneInfoModal = (props: Props) => {
       setIsShowModal(false);
     }
   };
+
+  const handleUpdateSmartphone = () => {
+    try {
+      api.updateSmartphone(props.BrandName, {
+      id: props.Smartphone.id,
+      name: name,
+      price: price,
+      discount: discount,
+      amount: amount,
+      description: description 
+      });
+      setIsShowModal(false);
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
+
 
   return (
     <>
@@ -47,21 +71,67 @@ const SmartphoneInfoModal = (props: Props) => {
                   </svg>
                 </button>
                 <div className="py-6 px-6 lg:px-8">
-                  <h3 className="mb-4 text-2xl font-medium text-black">{props.Smartphone.name}</h3>
+                  <textarea className="mb-4 text-2xl font-medium text-black placeholder:text-black resize-none"
+                    onChange={e => setName(e.target.value)}
+                    value={name}
+                    rows={2}
+                    maxLength={30}
+                  ></textarea>
                   <div className='flex mb-4'>
                     <img src={`${process.env.REACT_APP_API_URL}/images/${props.BrandName}?imageName=${props.Smartphone.id}`} className="w-4/6" />
-                    <h4 className='text-xl font-semibold'>
-                      Price: ${props.Smartphone.price}
-                    </h4>
+                    <div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-black">Цена($):</label>
+                        <textarea className='text-xl font-semibold resize-none w-20'
+                          onChange={e => {
+                            setPrice(Number(e.target.value));
+                            setAmount(Number(e.target.value) * (1 - discount / 100));
+                          }}
+                          value={price}
+                          rows={1}
+                          maxLength={5}
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-black">Скидка(%):</label>
+                        <textarea className='text-xl font-semibold resize-none w-20'
+                          onChange={e => {
+                            setDiscount(Number(e.target.value));
+                            setAmount(price * (1 - Number(e.target.value) / 100));
+                          }}
+                          value={discount}
+                          rows={1}
+                          maxLength={2}
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-black">Сумма($):</label>
+                        <textarea className='text-xl font-semibold resize-none w-20'
+                          value={amount.toFixed(2)}
+                          rows={1}
+                          maxLength={5}
+                          readOnly
+                        />
+                      </div>
+                    </div>
                   </div>
                   <h4 className='text-xl font-semibold'>
-                    Description
+                    Описание
                   </h4>
-                  <h5>
-                    {props.Smartphone.description}
-                  </h5>
+                  <textarea className='text-xl font-semibold resize-none w-full'
+                    onChange={e => setDescription(e.target.value)}
+                    value={description}
+                    rows={3}
+                    maxLength={200}
+                  />
+                  <button className='w-full bg-green hover:bg-blue focus:ring-2 focus:outline-none focus:ring-blue font-medium rounded-lg text-sm px-5 py-2.5 text-center'
+                    onClick={handleUpdateSmartphone}>
+                    Обновить
+                  </button>
                 </div>
+
               </div>
+
             </div>
           </div>
           {/* Outside */}
