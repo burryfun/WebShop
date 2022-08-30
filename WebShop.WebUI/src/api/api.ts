@@ -106,6 +106,11 @@ export namespace api {
     return response.data;
   }
 
+  export const updateSmartphone = async (brandName: string, smartphone: ISmartphone) => {
+    const response = await $api.put(`/catalog/${brandName}`, smartphone);
+    return response.data;
+  }
+
   export const postSmartphoneImage = async (brandName: string, smartphoneImage: IImage) => {
     const response = await $api.post(`/images/${brandName}`, smartphoneImage, {
       headers: {
