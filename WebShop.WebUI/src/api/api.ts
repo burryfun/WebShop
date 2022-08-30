@@ -150,6 +150,8 @@ export namespace api {
     name: string;
     description: string;
     price: number;
+    discount: number;
+    amount?: number;
   }
 
   export interface IAuthResponse {
