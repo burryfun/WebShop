@@ -86,9 +86,9 @@ export namespace api {
   }
 
 
-  export const getSmartphones = async (brandName: string, pageParameters?: IPageParameters) => {
-    if (pageParameters) {
-      const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}?PageNumber=${pageParameters.pageNumber}&PageSize=${pageParameters.pageSize}`);
+  export const getSmartphones = async (brandName: string, queryParameters?: IQueryParameters) => {
+    if (queryParameters) {
+      const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}?PageNumber=${queryParameters.pageNumber}&PageSize=${queryParameters.pageSize}&SortBy=${queryParameters.sortBy}`);
       return response;
     } else {
       const response = await $api.get<ISmartphone[]>(`/catalog/${brandName}`);
@@ -199,9 +199,10 @@ export namespace api {
     smartphones: ISmartphone[];
   }
 
-  export interface IPageParameters {
+  export interface IQueryParameters {
     pageNumber: number;
     pageSize: number;
+    sortBy?: string;
   }
 
   export interface IJwt {
