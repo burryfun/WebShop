@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using WebShop.API.Helpers;
 using WebShop.Domain;
@@ -22,7 +20,7 @@ namespace WebShop.API.Controllers
         }
 
         [HttpGet("/api/catalog/{brandName}")]
-        public async Task<ActionResult<List<Smartphone>>> GetSmartphonesByBrand(string brandName, [FromQuery] PageParameters pageParameters)
+        public async Task<ActionResult<List<Smartphone>>> GetSmartphonesByBrand(string brandName, [FromQuery] QueryParameters queryParameters)
         {
             var brand = _brandsRepository.GetByName(brandName);
 
@@ -31,11 +29,11 @@ namespace WebShop.API.Controllers
                 return NotFound();
             }
 
-            var validParameters = new PageParameters(pageParameters.PageNumber, pageParameters.PageSize);
+            var validParameters = new QueryParameters(queryParameters.PageNumber, queryParameters.PageSize);
 
-            var smartphonesByBrandId = _smartphonesRepository.GetAllByBrandId(brand.Id);
+            var sortedSmartphones = GetSortedSmartphonesByBrand(brand.Id, queryParameters.SortBy);
 
-            var smartphones = await PaginatedList<Smartphone>.CreateAsync(smartphonesByBrandId, validParameters.PageNumber, validParameters.PageSize);
+            var smartphones = await PaginatedList<Smartphone>.CreateAsync(sortedSmartphones, validParameters.PageNumber, validParameters.PageSize);
 
             var metadata = new
             {
@@ -119,6 +117,19 @@ namespace WebShop.API.Controllers
             }
 
             return BadRequest();
+        }
+
+        private IQueryable<Smartphone> GetSortedSmartphonesByBrand(Guid brandId, string? sortBy)
+        {
+            switch(sortBy)
+            {
+                case "LowestPrice":
+                    return _smartphonesRepository.GetAllByBrandId(brandId).OrderBy(x => x.Price);
+                case "HighestPrice":
+                    return _smartphonesRepository.GetAllByBrandId(brandId).OrderByDescending(x => x.Price);
+                default:
+                    return _smartphonesRepository.GetAllByBrandId(brandId).OrderBy(x => x.Name);
+            }
         }
     }
 }
