@@ -25,7 +25,7 @@ const MyOrdersPage = () => {
                 Phone
               </th>
               <th scope="col" className="py-3 px-6">
-                Price
+                Amount
               </th>
             </tr>
           </thead>
@@ -55,7 +55,7 @@ const MyOrdersPage = () => {
                   <td>
                   </td>
                   <td className="py-2 px-10">
-                    ${smartphone.price}
+                    ${smartphone.amount}
                   </td>
                 </tr>
               ))}
