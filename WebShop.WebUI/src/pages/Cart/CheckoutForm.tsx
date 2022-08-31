@@ -26,6 +26,9 @@ const CheckoutForm = () => {
       navigate("/successfulCheckout");
       cartStore.clear();
     }
+    else {
+      alert("You need to login or register to checkout you order")
+    }
 
   }
 
