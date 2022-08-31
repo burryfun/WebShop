@@ -43,7 +43,9 @@ const LoginFormModal = () => {
   const targetContainer = useRef<HTMLDivElement>(null);
   const onOverlayClick = (e: React.MouseEvent) => {
     if (!targetContainer.current?.contains(e.target as Node)) {
-      setIsShowLoginForm(false);
+      setTimeout(() => {
+        setIsShowLoginForm(false);
+      }, 300);
       setOpacityLoginForm(true);
       setScaleLoginForm(true);
     }
