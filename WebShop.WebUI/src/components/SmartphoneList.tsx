@@ -77,7 +77,7 @@ const SmartphoneList = ({ brandName }: Props) => {
     <>
       <div className='flex justify-center mx-auto w-full mb-4'>
       <div className='grid gap-4 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2'>
-        <div className='col-start-5 relative text-end'>
+        <div className='lg:col-start-5 md:col-start-3 sm:col-start-2 relative text-end'>
           <button className="bg-green hover:bg-blue font-medium rounded-lg text-sm px-4 py-2.5 w-60 text-center inline-flex items-center justify-between"
             onClick={handleDropdown}>
             Sort by: {sortBy}
