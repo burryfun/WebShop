@@ -1,50 +1,53 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using WebShop.Domain;
-//using WebShop.Persistence.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using WebShop.API.Helpers;
+using WebShop.Domain;
+using WebShop.Persistence.Repositories;
 
-//namespace WebShop.API.Controllers
-//{
-//    public class SmartphoneController : ControllerBase
-//    {
-//        private readonly SmartphonesRepository _smartphonesRepository;
+namespace WebShop.API.Controllers
+{
+    public class SmartphoneController : ControllerBase
+    {
+        private readonly SmartphonesRepository _smartphonesRepository;
 
-//        public SmartphoneController(SmartphonesRepository repository)
-//        {
-//            _smartphonesRepository = repository;
-//        }
+        public SmartphoneController(SmartphonesRepository repository)
+        {
+            _smartphonesRepository = repository;
+        }
 
-//        [HttpGet("api/[controller]/catalog")]
-//        public ActionResult<List<Smartphone>> GetProducts()
-//        {
-//            var products = _smartphonesRepository.GetAll().ToList();
-//            if (products == null)
-//            {
-//                return NotFound();
-//            }
-//            return Ok(products);
-//        }
+        [HttpGet("api/smartphones")]
+        public async Task<ActionResult<List<Smartphone>>> GetSmartphones([FromQuery] QueryParameters queryParameters)
+        {
+            var sortedSmartphones = GetSortedSmartphones(queryParameters.SortBy);
 
-//        [HttpGet("api/[controller]/catalog/{id}")]
-//        public ActionResult<List<Smartphone>> GetProductById(int id)
-//        {
-//            var product = _smartphonesRepository.GetById(id);
-//            if (product == null)
-//            {
-//                return NotFound();
-//            }
-//            return Ok(product);
-//        }
+            var smartphones = await PaginatedList<Smartphone>.CreateAsync(
+                sortedSmartphones, 
+                queryParameters.PageNumber, 
+                queryParameters.PageSize
+                );
 
-//        [HttpPost("api/[controller]")]
-//        public void AddProduct([FromBody] Smartphone product)
-//        {
-//            _smartphonesRepository.Create(product);
-//        }
+            var metadata = new
+            {
+                totalPages = smartphones.TotalPages,
+                pageIndex = smartphones.PageIndex,
+            };
 
-//        [HttpDelete("api/[controller]/{id}")]
-//        public void DeleteProduct(int id)
-//        {
-//            _smartphonesRepository.Delete(id);
-//        }
-//    }
-//}
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
+            return Ok(smartphones);
+        }
+
+        private IQueryable<Smartphone> GetSortedSmartphones(string? sortBy)
+        {
+            switch(sortBy)
+            {
+                case "LowestPrice":
+                    return _smartphonesRepository.GetAll().OrderBy(x => x.Price);
+                case "HighestPrice":
+                    return _smartphonesRepository.GetAll().OrderByDescending(x => x.Price);
+                default:
+                    return _smartphonesRepository.GetAll().OrderBy(x => x.Name);
+            }
+        }
+    }
+}
