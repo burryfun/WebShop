@@ -37,11 +37,13 @@ namespace WebShop.Application.Services
             }
 
             var smartphones = new List<Smartphone>();
+            decimal totalAmount = 0;
 
             foreach(var id in request.SmartphonesId)
             {
                 var smartphone = _smartphonesRepository.GetById(id);
                 smartphones.Add(smartphone);
+                totalAmount += smartphone.Amount;
             }
 
             var order = new Order { 
@@ -49,7 +51,7 @@ namespace WebShop.Application.Services
                 Address = request.Address,
                 Created = DateTime.UtcNow,
                 Phone = request.Phone,
-                Total = request.Total,
+                Total = totalAmount,
                 Smartphones = smartphones
             };
 
@@ -58,7 +60,6 @@ namespace WebShop.Application.Services
             return new CheckoutResponse { 
                 IsSuccess = true , 
                 Message = "Order is processed", 
-                Smartphones = smartphones
             };
         }
     }
