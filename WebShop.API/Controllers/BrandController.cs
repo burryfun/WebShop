@@ -20,7 +20,10 @@ namespace WebShop.API.Controllers
         }
 
         [HttpGet("/api/catalog/{brandName}")]
-        public async Task<ActionResult<List<Smartphone>>> GetSmartphonesByBrand(string brandName, [FromQuery] QueryParameters queryParameters)
+        public async Task<ActionResult<List<Smartphone>>> GetSmartphonesByBrand(
+            string brandName,
+            [FromQuery] QueryParameters queryParameters
+            )
         {
             var brand = _brandsRepository.GetByName(brandName);
 
@@ -31,9 +34,13 @@ namespace WebShop.API.Controllers
 
             var validParameters = new QueryParameters(queryParameters.PageNumber, queryParameters.PageSize);
 
-            var sortedSmartphones = GetSortedSmartphonesByBrand(brand.Id, queryParameters.SortBy);
+            IQueryable<Smartphone> sortedSmartphones = GetSortedSmartphonesByBrand(brand.Id, queryParameters.SortBy);
 
-            var smartphones = await PaginatedList<Smartphone>.CreateAsync(sortedSmartphones, validParameters.PageNumber, validParameters.PageSize);
+            var smartphones = await PaginatedList<Smartphone>.CreateAsync(
+                sortedSmartphones,
+                validParameters.PageNumber,
+                validParameters.PageSize
+                );
 
             var metadata = new
             {
@@ -61,6 +68,7 @@ namespace WebShop.API.Controllers
                 {
                     Id = smartphone.Id,
                     Name = smartphone.Name,
+                    BrandName = smartphone.BrandName,
                     Description = smartphone.Description,
                     Price = smartphone.Price,
                     Discount = smartphone.Discount,
@@ -121,7 +129,7 @@ namespace WebShop.API.Controllers
 
         private IQueryable<Smartphone> GetSortedSmartphonesByBrand(Guid brandId, string? sortBy)
         {
-            switch(sortBy)
+            switch (sortBy)
             {
                 case "LowestPrice":
                     return _smartphonesRepository.GetAllByBrandId(brandId).OrderBy(x => x.Price);

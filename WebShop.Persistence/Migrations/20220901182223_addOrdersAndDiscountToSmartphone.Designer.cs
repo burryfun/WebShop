@@ -12,8 +12,8 @@ using WebShop.Persistence;
 namespace WebShop.Persistence.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    [Migration("20220829203821_addDiscountToSmartphone")]
-    partial class addDiscountToSmartphone
+    [Migration("20220901182223_addOrdersAndDiscountToSmartphone")]
+    partial class addOrdersAndDiscountToSmartphone
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,21 @@ namespace WebShop.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("OrderSmartphone", b =>
+                {
+                    b.Property<Guid>("OrdersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SmartphonesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("OrdersId", "SmartphonesId");
+
+                    b.HasIndex("SmartphonesId");
+
+                    b.ToTable("OrderSmartphone");
+                });
 
             modelBuilder.Entity("WebShop.Domain.Account", b =>
                 {
@@ -48,7 +63,7 @@ namespace WebShop.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("df75307d-18a5-455f-8874-34aa9fab2aa0"),
+                            Id = new Guid("61dffd0c-612d-4675-87e5-c5ef0d1489e6"),
                             Email = "admin@admin.com",
                             Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
                             Role = 0
@@ -123,9 +138,6 @@ namespace WebShop.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -133,9 +145,22 @@ namespace WebShop.Persistence.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.HasIndex("OrderId");
-
                     b.ToTable("smartphones");
+                });
+
+            modelBuilder.Entity("OrderSmartphone", b =>
+                {
+                    b.HasOne("WebShop.Domain.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebShop.Domain.Smartphone", null)
+                        .WithMany()
+                        .HasForeignKey("SmartphonesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebShop.Domain.Account", b =>
@@ -203,18 +228,9 @@ namespace WebShop.Persistence.Migrations
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("WebShop.Domain.Order", null)
-                        .WithMany("Smartphones")
-                        .HasForeignKey("OrderId");
                 });
 
             modelBuilder.Entity("WebShop.Domain.Brand", b =>
-                {
-                    b.Navigation("Smartphones");
-                });
-
-            modelBuilder.Entity("WebShop.Domain.Order", b =>
                 {
                     b.Navigation("Smartphones");
                 });
