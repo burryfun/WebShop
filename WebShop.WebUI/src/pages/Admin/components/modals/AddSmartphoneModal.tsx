@@ -25,7 +25,15 @@ const AddSmartphoneModal = (props: Props) => {
     const smartphoneId = Guid.create().toString();
 
     try {
-      api.postSmartphone(props.brandName, { id: smartphoneId, name: name, price: price, discount: discount, amount: amount, description: description });
+      api.postSmartphone(props.brandName, { 
+        id: smartphoneId, 
+        name: name, 
+        brandName: props.brandName, 
+        price: price, 
+        discount: discount, 
+        amount: amount, 
+        description: description 
+      });
       if (image) {
         api.postSmartphoneImage(props.brandName, { name: smartphoneId, image: image[0] });
       }

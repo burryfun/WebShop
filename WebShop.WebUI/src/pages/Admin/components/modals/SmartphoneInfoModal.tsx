@@ -30,6 +30,7 @@ const SmartphoneInfoModal = (props: Props) => {
       api.updateSmartphone(props.BrandName, {
       id: props.Smartphone.id,
       name: name,
+      brandName: props.BrandName,
       price: price,
       discount: discount,
       amount: amount,
