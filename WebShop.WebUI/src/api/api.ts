@@ -85,6 +85,15 @@ export namespace api {
     return response.data;
   }
 
+  export const getAllSmartphones = async (queryParameters?: IQueryParameters) => {
+    if (queryParameters) {
+      const response = await $api.get<ISmartphone[]>(`/smartphones?PageNumber=${queryParameters.pageNumber}&PageSize=${queryParameters.pageSize}&SortBy=${queryParameters.sortBy}`);
+      return response;
+    } else {
+      const response = await $api.get<ISmartphone[]>(`/catalog/smartphones`);
+      return response;
+    }
+  }
 
   export const getSmartphones = async (brandName: string, queryParameters?: IQueryParameters) => {
     if (queryParameters) {
@@ -153,6 +162,7 @@ export namespace api {
   export interface ISmartphone {
     id: string;
     name: string;
+    brandName: string;
     description: string;
     price: number;
     discount: number;
@@ -176,7 +186,6 @@ export namespace api {
   export interface ICheckoutRequest {
     phone: string;
     address: string;
-    total: number;
     smartphonesId: string[];
   }
 
