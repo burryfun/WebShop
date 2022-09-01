@@ -38,7 +38,7 @@ const SmartphoneList = () => {
                       </div>
                       <div className='flex justify-around self-center text-lg font-semibold items-center'>
                         <span>{smartphone.smartphoneName}</span>
-                        <span className='px-4'>${smartphone.smartphonePrice}</span>
+                        <span className='px-4'>${smartphone.smartphoneAmount}</span>
                       </div>
                       <div className='self-center'>
                         <button type='button' className=' bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center font-semibold'

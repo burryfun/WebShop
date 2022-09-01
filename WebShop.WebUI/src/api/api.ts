@@ -179,7 +179,7 @@ export namespace api {
   export interface ICart {
     smartphoneId: string;
     smartphoneName: string;
-    smartphonePrice: number;
+    smartphoneAmount: number;
     brandName: string;
   }
 

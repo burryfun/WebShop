@@ -18,7 +18,6 @@ const CheckoutForm = () => {
     const result = await api.checkout({
       phone: phone,
       address: address,
-      total: cartStore.getTotalPrice(),
       smartphonesId: cartStore.smartphonesId
     })
 
@@ -66,7 +65,7 @@ const CheckoutForm = () => {
             </div>
             <div className='flex justify-between text-md font-medium'>
               <h3>Total</h3>
-              <h3>${cartStore.getTotalPrice()}</h3>
+              <h3>${cartStore.getTotalAmount()}</h3>
             </div>
             <button type='submit' className=' bg-green text-base hover:bg-dark rounded-lg px-4 py-3 self-center font-semibold'
               onClick={() => {
