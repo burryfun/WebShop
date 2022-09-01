@@ -41,7 +41,7 @@ namespace WebShop.Persistence.Repositories
                 {
                     SmartphoneId = s.Id,
                     SmartphoneName = s.Name,
-                    SmartphonePrice = s.Price,
+                    SmartphoneAmount = s.Amount,
                     BrandName = b.Name
                 }).Where(s => s.SmartphoneId == id).Single();
             return result;

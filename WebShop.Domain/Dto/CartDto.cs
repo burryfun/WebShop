@@ -11,6 +11,6 @@ namespace WebShop.Domain.Dto
         public Guid SmartphoneId { get; set; }
         public string BrandName { get; set; }
         public string SmartphoneName { get; set; }
-        public decimal SmartphonePrice { get; set; }
+        public decimal SmartphoneAmount { get; set; }
     }
 }
