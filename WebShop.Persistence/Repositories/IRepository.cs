@@ -5,7 +5,7 @@ namespace WebShop.Persistence.Repositories
     {
         T Create(T _object);
         T GetById(Guid id);
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
         T Update(T _object);
         bool Delete(Guid id);
     }

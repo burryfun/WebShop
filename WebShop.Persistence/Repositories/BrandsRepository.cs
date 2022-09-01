@@ -35,7 +35,7 @@ namespace WebShop.Persistence.Repositories
             return brand;
         }
 
-        public IEnumerable<Brand> GetAll()
+        public IQueryable<Brand> GetAll()
         {
             return _context.brands;
         }

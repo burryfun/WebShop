@@ -31,7 +31,7 @@ namespace WebShop.Persistence.Repositories
             return order;
         }
 
-        public IEnumerable<OrderDto> GetAllByAccountId(Guid accountId)
+        public IQueryable<OrderDto> GetAllByAccountId(Guid accountId)
         {
             var orders = _context.orders.Where(x => x.Account.Id == accountId).Select(x => new OrderDto
             {
@@ -60,7 +60,7 @@ namespace WebShop.Persistence.Repositories
         }
 
 
-        public IEnumerable<Order> GetAll()
+        public IQueryable<Order> GetAll()
         {
             return _context.orders;
         }

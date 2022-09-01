@@ -47,7 +47,7 @@ namespace WebShop.Persistence.Repositories
             return result;
         }
 
-        public IEnumerable<Smartphone> GetAll()
+        public IQueryable<Smartphone> GetAll()
         {
             return _context.smartphones;
         }
