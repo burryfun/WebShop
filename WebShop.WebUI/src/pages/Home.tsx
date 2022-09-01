@@ -7,19 +7,24 @@ interface IPageParams {
   totalPages: number;
 }
 
+interface IDropdownOptions {
+  label: string;
+  value: string;
+}
+
 const Home = () => {
 
   const [brands, setBrands] = useState<api.IBrand[] | null>(null);
   const [smartphones, setSmartphones] = useState<api.ISmartphone[] | null>(null)
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [sortBy, setSortBy] = useState<string>("Name");
+  const [sortBy, setSortBy] = useState<IDropdownOptions>({ label: "Name", value: "Name" });
 
   const PAGE_SIZE = 15;
 
   useEffect(() => {
     api.getBrands().then(data => setBrands(data));
-    api.getAllSmartphones({ pageNumber: 1, pageSize: PAGE_SIZE, sortBy: sortBy }).then(response => {
+    api.getAllSmartphones({ pageNumber: 1, pageSize: PAGE_SIZE, sortBy: sortBy.value }).then(response => {
       setSmartphones(response.data);
       const params: IPageParams = JSON.parse(response.headers["x-pagination"]);
       setCurrentPage(params.pageIndex);
@@ -33,17 +38,12 @@ const Home = () => {
 
     const clickedPage: number = Number.parseInt(event.currentTarget.textContent!);
 
-    api.getAllSmartphones({ pageNumber: clickedPage, pageSize: PAGE_SIZE }).then(response => {
+    api.getAllSmartphones({ pageNumber: clickedPage, pageSize: PAGE_SIZE, sortBy: sortBy.value}).then(response => {
       setSmartphones(response.data);
       const params: IPageParams = JSON.parse(response.headers["x-pagination"]);
       setCurrentPage(params.pageIndex);
       setTotalPages(params.totalPages);
     })
-  }
-
-  interface IDropdownOptions {
-    label: string;
-    value: string;
   }
 
   const dropdownOptions: IDropdownOptions[] = [
@@ -65,7 +65,7 @@ const Home = () => {
       setTotalPages(params.totalPages);
     });
 
-    setSortBy(option.label)
+    setSortBy(option)
     setIsShowDropdown(false);
   }
 
@@ -76,7 +76,7 @@ const Home = () => {
           <div className='lg:col-start-5 md:col-start-3 sm:col-start-2 relative text-end'>
             <button className="bg-green hover:bg-blue font-medium rounded-lg text-sm px-4 py-2.5 w-60 text-center inline-flex items-center justify-between"
               onClick={handleDropdown}>
-              Sort by: {sortBy}
+              Sort by: {sortBy.label}
               <svg className="ml-2 w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
