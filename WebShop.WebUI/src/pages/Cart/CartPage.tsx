@@ -3,7 +3,7 @@ import SmartphoneList from './SmartphoneList';
 
 const CartPage = () => {
   return (
-    <div>
+    <div className='min-h-screen'>
       <SmartphoneList/>
     </div>
   );

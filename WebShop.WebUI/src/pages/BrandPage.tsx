@@ -6,7 +6,7 @@ const BrandPage = () => {
   const params = useParams();
   const brandName = params.brandName;
   return (
-    <div>
+    <div className='min-h-screen'>
       <SmartphoneList brandName={brandName} />
     </div>
   );

@@ -3,7 +3,7 @@ import BrandList from './components/BrandList';
 
 const AdminPage = () => {
   return (
-    <div>
+    <div className='min-h-screen'>
       <BrandList/>
     </div>
   );

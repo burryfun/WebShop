@@ -15,6 +15,7 @@ import AdminPage from './pages/Admin/AdminPage';
 import CartPage from './pages/Cart/CartPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import SuccessfulCheckoutPage from './pages/SuccessfulCheckoutPage';
+import Footer from './components/Footer';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
           <Route path="/successfulCheckout" element={<SuccessfulCheckoutPage/>} />
         </Routes>
       </div>
+      <Footer />
     </div>
   );
 }
