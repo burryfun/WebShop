@@ -44,12 +44,12 @@ export default class CartStore {
     this.count = 0;
   }
 
-  getTotalAmount(): number {
+  getTotalAmount(): string {
     let sum = 0;
     this.smartphones.forEach(smartphone => {
       sum += smartphone.smartphoneAmount;
     });
-    return sum;
+    return sum.toFixed(2);
   }
 
 }
