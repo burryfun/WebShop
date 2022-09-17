@@ -30,10 +30,17 @@ namespace WebShop.API.Controllers
         [HttpPost("api/images")]
         public async Task<IActionResult> UploadImage([FromForm] ImageViewModel imageViewModel)
         {
+            string imagesPath = $"{Directory.GetCurrentDirectory()}/images";
+
+            if (!Directory.Exists(imagesPath))
+            {
+                Directory.CreateDirectory(imagesPath);
+            }
+
             if (imageViewModel.Image != null)
             {
                 var imageName = imageViewModel.Name;
-                var fullPath = $"{Directory.GetCurrentDirectory()}/images/{imageName}";
+                var fullPath = $"{imagesPath}/{imageName}";
                 using (var fileStream = new FileStream(fullPath, FileMode.Create))
                 {
                     await imageViewModel.Image.CopyToAsync(fileStream);
