@@ -2,7 +2,7 @@
 
 This project is a full-stack application which is online shop to sell smartphones.
 
-![](./images/output3.gif)
+![](./images/webshop.gif)
 
 ## Solution Structure
 
